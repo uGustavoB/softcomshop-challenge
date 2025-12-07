@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\PratoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,16 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
 
+});
+
+Route::group([
+    'middleware' => 'jwt.auth',
+   'prefix' => 'prato'
+], function () {
+    Route::get('/', 'App\Http\Controllers\PratoController@listagem');
+    Route::post('/', 'App\Http\Controllers\PratoController@salvar');
+    Route::put('/{id}', 'App\Http\Controllers\PratoController@salvar');
+    Route::delete('/{id}', 'App\Http\Controllers\PratoController@deletar');
 });
 
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
