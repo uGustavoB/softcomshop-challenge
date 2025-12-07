@@ -24,4 +24,9 @@ class Prato extends Model
         'preco' => 'float',
         'disponivel' => 'boolean',
     ];
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
 }

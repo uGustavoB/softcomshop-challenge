@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Categoria extends Model
+{
+    use HasFactory;
+
+    protected $table = 'categorias';
+
+    // Campos preenchíveis
+    protected $fillable = [
+        'nome',
+        'descricao',
+        'ativo'
+    ];
+
+    // Casts
+    protected $casts = [
+        'ativo' => 'boolean',
+    ];
+
+    /**
+     * Relacionamento com pratos
+     */
+    public function pratos()
+    {
+        return $this->hasMany(Prato::class, 'categoria_id');
+    }
+}

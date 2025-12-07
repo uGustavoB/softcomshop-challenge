@@ -34,6 +34,16 @@ Route::group([
     Route::delete('/{id}', 'App\Http\Controllers\PratoController@deletar');
 });
 
+Route::group([
+    'middleware' => 'jwt.auth',
+    'prefix' => 'categoria'
+], function () {
+    Route::get('/', 'App\Http\Controllers\CategoriaController@listagem');
+    Route::post('/', 'App\Http\Controllers\CategoriaController@cadastrar');
+    Route::put('/{id}', 'App\Http\Controllers\CategoriaController@editar');
+    Route::delete('/{id}', 'App\Http\Controllers\CategoriaController@deletar');
+});
+
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
