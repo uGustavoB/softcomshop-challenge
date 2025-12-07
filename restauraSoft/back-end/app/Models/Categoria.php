@@ -15,11 +15,13 @@ class Categoria extends Model
     protected $fillable = [
         'nome',
         'descricao',
+        'ordem',
         'ativo'
     ];
 
     // Casts
     protected $casts = [
+        'ordem' => 'integer',
         'ativo' => 'boolean',
     ];
 

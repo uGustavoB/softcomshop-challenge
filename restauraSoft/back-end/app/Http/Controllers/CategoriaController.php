@@ -23,6 +23,7 @@ class CategoriaController extends Controller
                 'id' => $categoria->id,
                 'nome' => $categoria->nome,
                 'descricao' => $categoria->descricao,
+                'ordem' => $categoria->ordem,
                 'ativo' => $categoria->ativo,
             ];
         });
@@ -46,6 +47,7 @@ class CategoriaController extends Controller
                 'id' => $categoria->id,
                 'nome' => $categoria->nome,
                 'descricao' => $categoria->descricao,
+                'ordem' => $categoria->ordem,
                 'ativo' => $categoria->ativo,
             ]
         ]);
@@ -67,6 +69,7 @@ class CategoriaController extends Controller
                 'id' => $categoria->id,
                 'nome' => $categoria->nome,
                 'descricao' => $categoria->descricao,
+                'ordem' => $categoria->ordem,
                 'ativo' => $categoria->ativo,
             ]
         ]);
