@@ -29,8 +29,8 @@ Route::group([
    'prefix' => 'prato'
 ], function () {
     Route::get('/', 'App\Http\Controllers\PratoController@listagem');
-    Route::post('/', 'App\Http\Controllers\PratoController@salvar');
-    Route::put('/{id}', 'App\Http\Controllers\PratoController@salvar');
+    Route::post('/', 'App\Http\Controllers\PratoController@cadastrar');
+    Route::put('/{id}', 'App\Http\Controllers\PratoController@editar');
     Route::delete('/{id}', 'App\Http\Controllers\PratoController@deletar');
 });
 
