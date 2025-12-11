@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PratoRequest;
 use App\Repositories\PratoRepository;
+use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
 use Illuminate\Http\Request;
 
 /**
@@ -75,26 +76,14 @@ class PratoController extends Controller
      *       )
      * )
      */
-    public function listagem()
+    public function listagem(IListarPratosUseCase $useCase)
     {
-        $pratos = $this->repository->listagem();
-
-        $pratosFiltrados = $pratos->map(function($prato) {
-            return [
-                'id' => $prato->id,
-                'nome' => $prato->nome,
-                'descricao' => $prato->descricao,
-                'preco' => $prato->preco,
-                'imagem' => $prato->imagem,
-                'categoria_id' => $prato->categoria_id,
-                'ativo' => $prato->ativo,
-            ];
-        });
+        $resposta = $useCase->execute();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Pratos retornados com sucesso',
-            'data' => $pratosFiltrados
+            'data' => $resposta
         ]);
     }
 
