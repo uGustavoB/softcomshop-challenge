@@ -32,41 +32,41 @@ class CategoriaController extends Controller
     public function cadastrar(CategoriaRequest $request, ICriarCategoriasUseCase $createCategoriaUseCase) {
         $dados = $request->validated();
 
-        $resultado = $createCategoriaUseCase->execute($dados);
+        $resposta = $createCategoriaUseCase->execute($dados);
 
         return response()->json(
             [
-                'status' => $resultado['status'],
-                'message' => $resultado['message'],
-                'data' => $resultado['data'] ?? null,
+                'status' => $resposta['status'],
+                'message' => $resposta['message'],
+                'data' => $resposta['data'] ?? null,
             ],
-            $resultado['http']
+            $resposta['http']
         );
     }
 
     public function editar(CategoriaRequest $request, IEditarCategoriaUseCase $useCase, $id) {
-        $resultado = $useCase->execute($request, $id);
+        $resposta = $useCase->execute($request, $id);
 
         return response()->json(
             [
-                'status' => $resultado['status'],
-                'message' => $resultado['message'],
-                'data' => $resultado['data'] ?? null,
+                'status' => $resposta['status'],
+                'message' => $resposta['message'],
+                'data' => $resposta['data'] ?? null,
             ],
-            $resultado['http']
+            $resposta['http']
         );
     }
 
     public function deletar(IDeletarCategoriaUseCase $useCase, $id ) {
-        $resultado = $useCase->execute($id);
+        $resposta = $useCase->execute($id);
 
         return response()->json(
             [
-                'status' => $resultado['status'],
-                'message' => $resultado['message'],
-                'data' => $resultado['data'] ?? null,
+                'status' => $resposta['status'],
+                'message' => $resposta['message'],
+                'data' => $resposta['data'] ?? null,
             ],
-            $resultado['http']
+            $resposta['http']
         );
     }
 }
