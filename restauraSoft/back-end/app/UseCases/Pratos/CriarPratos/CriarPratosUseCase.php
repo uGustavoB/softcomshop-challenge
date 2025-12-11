@@ -2,7 +2,6 @@
 
 namespace App\UseCases\Pratos\CriarPratos;
 
-use App\Repositories\CategoriaRepository;
 use App\Repositories\PratoRepository;
 use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use Exception;
@@ -14,7 +13,7 @@ class CriarPratosUseCase implements ICriarPratosUseCase
     private $verificarCategoriaUseCase;
 
     public function __construct(
-        CategoriaRepository $repository,
+        PratoRepository $repository,
         IVerificarCategoriaUseCase $verificarCategoriaUseCase
     ) {
         $this->repository = $repository;

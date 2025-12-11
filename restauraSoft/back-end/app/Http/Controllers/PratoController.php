@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PratoRequest;
 use App\Repositories\PratoRepository;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
+use App\UseCases\Pratos\DeletarPrato\IDeletarPratoUseCase;
 use App\UseCases\Pratos\EditarPratos\IEditarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
 use Illuminate\Http\Request;
@@ -281,11 +282,14 @@ class PratoController extends Controller
      *      )
      * )
      */
-    public function deletar(Request $request, $id) {
-        $retorno = $this->repository->deletar($id);
+    public function deletar(IDeletarPratoUseCase $useCase, $id) {
+        $resposta = $useCase->execute($id);
         return response()->json([
-            'status' => $retorno ? 'success' : 'error',
-            'message' => $retorno ? "Prato deletado com sucesso" : "Erro ao deletar",
-        ]);
+            'status' => $resposta['status'],
+            'message' => $resposta['message'],
+            'data' => $resposta['data'] ?? null
+        ],
+            $resposta['http']
+        );
     }
 }
