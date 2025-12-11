@@ -9,8 +9,10 @@ class ListarPratosUseCase implements IListarPratosUseCase
 {
     private $repository;
 
-    public function __construct() {
-        $this->repository = new PratoRepository();
+    public function __construct(
+        PratoRepository $repository
+    ) {
+        $this->repository = $repository;
     }
 
     public function execute()
