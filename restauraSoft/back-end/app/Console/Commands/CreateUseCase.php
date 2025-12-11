@@ -86,7 +86,7 @@ namespace App\UseCases\\{$domain}\\{$action};
 
 class {$action}UseCase implements I{$action}UseCase
 {
-    public function handle(\$request)
+    public function execute(\$request)
     {
         // TODO: Implement logic
     }
@@ -108,7 +108,7 @@ namespace App\UseCases\\{$domain}\\{$action};
 
 interface I{$action}UseCase
 {
-    public function handle(\$request);
+    public function execute(\$request);
 }
 PHP;
     }
