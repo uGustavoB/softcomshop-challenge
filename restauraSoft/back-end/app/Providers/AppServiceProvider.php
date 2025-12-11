@@ -12,6 +12,8 @@ use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use App\UseCases\Categoria\VerificarCategoria\VerificarCategoriaUseCase;
 use App\UseCases\Pratos\CriarPratos\CriarPratosUseCase;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
+use App\UseCases\Pratos\EditarPratos\EditarPratosUseCase;
+use App\UseCases\Pratos\EditarPratos\IEditarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\ListarPratosUseCase;
 use Illuminate\Support\ServiceProvider;
@@ -36,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IListarPratosUseCase::class,
             ListarPratosUseCase::class
+        );
+        $this->app->bind(
+            IEditarPratosUseCase::class,
+            EditarPratosUseCase::class
         );
 
 //      Categoria UseCases

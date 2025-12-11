@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PratoRequest;
 use App\Repositories\PratoRepository;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
+use App\UseCases\Pratos\EditarPratos\IEditarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
 use Illuminate\Http\Request;
 
@@ -232,28 +233,16 @@ class PratoController extends Controller
      *       )
      * )
      */
-    public function editar(PratoRequest $request, $id = null) {
-        $dados = $request->all();
-
-        if ($id) {
-            $dados['id'] = $id;
-        }
-
-        $prato = $this->repository->salvar($dados);
+    public function editar(PratoRequest $request, IEditarPratosUseCase $useCase, $id = null) {
+        $resposta = $useCase->execute($request, $id);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Prato salvo com sucesso',
-            'data' => [
-                'id' => $prato->id,
-                'nome' => $prato->nome,
-                'descricao' => $prato->descricao,
-                'preco' => $prato->preco,
-                'imagem' => $prato->imagem,
-                'categoria_id' => $prato->categoria_id,
-                'ativo' => $prato->ativo,
-            ]
-        ]);
+            'status' => $resposta['status'],
+            'message' => $resposta['message'],
+            'data' => $resposta['data'] ?? null
+        ],
+            $resposta['http']
+        );
     }
 
     /**

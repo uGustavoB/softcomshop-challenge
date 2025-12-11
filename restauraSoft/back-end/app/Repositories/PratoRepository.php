@@ -54,4 +54,9 @@ class PratoRepository extends BaseRepository
     {
         return $this->model()::where('nome', $nome)->exists();
     }
+
+    public function buscarPorId($id)
+    {
+        return $this->model()::find($id);
+    }
 }
