@@ -8,6 +8,8 @@ use App\UseCases\Categoria\EditarCategoria\EditarCategoriaUseCase;
 use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
 use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
 use App\UseCases\Categoria\ListarCategorias\ListarCategoriasUseCase;
+use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
+use App\UseCases\Categoria\VerificarCategoria\VerificarCategoriaUseCase;
 use App\UseCases\Pratos\CriarPratos\CriarPratosUseCase;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
@@ -52,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IDeletarCategoriaUseCase::class,
             DeletarCategoriaUseCase::class
+        );
+        $this->app->bind(
+            IVerificarCategoriaUseCase::class,
+            VerificarCategoriaUseCase::class
         );
     }
 
