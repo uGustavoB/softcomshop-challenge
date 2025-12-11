@@ -52,4 +52,9 @@ class CategoriaRepository extends BaseRepository
 
         return true;
     }
+
+    public function existeNome($nome)
+    {
+        return $this->model()::where('nome', $nome)->exists();
+    }
 }
