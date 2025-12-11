@@ -2,16 +2,23 @@
 
 namespace App\UseCases\Pratos\CriarPratos;
 
+use App\Repositories\CategoriaRepository;
 use App\Repositories\PratoRepository;
+use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
 class CriarPratosUseCase implements ICriarPratosUseCase
 {
     private $repository;
+    private $verificarCategoriaUseCase;
 
-    public function __construct() {
-        $this->repository = new PratoRepository();
+    public function __construct(
+        CategoriaRepository $repository,
+        IVerificarCategoriaUseCase $verificarCategoriaUseCase
+    ) {
+        $this->repository = $repository;
+        $this->verificarCategoriaUseCase = $verificarCategoriaUseCase;
     }
 
     public function execute($dados): array
@@ -19,6 +26,10 @@ class CriarPratosUseCase implements ICriarPratosUseCase
         try {
             if ($this->repository->existeNome($dados['nome'])) {
                 throw new Exception("Já existe um prato com este nome.", 409);
+            }
+
+            if (!$this->verificarCategoriaUseCase->execute($dados['categoria_id'])) {
+                throw new Exception("Categoria inválida.", 400);
             }
 
             $prato = $this->repository->salvar($dados);
