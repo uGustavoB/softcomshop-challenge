@@ -15,8 +15,14 @@ class EditarCategoriaUseCase implements IEditarCategoriaUseCase
         $this->repository = $repository;
     }
 
-    public function execute($request, $dados): array
+    public function execute($request, $id): array
     {
+        $dados = $request->validated();
+
+        if ($id) {
+            $dados['id'] = $id;
+        }
+
         try {
             if (isset($dados['id'])) {
                 $categoriaExistente = $this->repository->buscarPorId($dados['id']);

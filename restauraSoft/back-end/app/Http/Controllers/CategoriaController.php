@@ -44,14 +44,8 @@ class CategoriaController extends Controller
         );
     }
 
-    public function editar(CategoriaRequest $request, $id = null, IEditarCategoriaUseCase $useCase) {
-        $dados = $request->validated();
-
-        if ($id) {
-            $dados['id'] = $id;
-        }
-
-        $resultado = $useCase->execute($request, $dados);
+    public function editar(CategoriaRequest $request, IEditarCategoriaUseCase $useCase, $id = null) {
+        $resultado = $useCase->execute($request, $id);
 
         return response()->json(
             [
