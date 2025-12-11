@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
+use App\UseCases\Categoria\ListarCategorias\ListarCategoriasUseCase;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use App\UseCases\Categoria\CriarCategorias\CriarCategoriasUseCase;
@@ -20,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ICriarCategoriasUseCase::class,
             CriarCategoriasUseCase::class
+        );
+        $this->app->bind(
+            IListarCategoriasUseCase::class,
+            ListarCategoriasUseCase::class
         );
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoriaRequest;
 use App\Repositories\CategoriaRepository;
 use App\UseCases\Categoria\CriarCategorias\ICriarCategoriasUseCase;
+use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
 use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
@@ -16,24 +17,14 @@ class CategoriaController extends Controller
         $this->repository = $repository;
     }
 
-    public function listagem()
+    public function listagem(IListarCategoriasUseCase  $useCase)
     {
-        $categorias = $this->repository->listagem();
-
-        $categoriasFiltrados = $categorias->map(function($categoria) {
-            return [
-                'id' => $categoria->id,
-                'nome' => $categoria->nome,
-                'descricao' => $categoria->descricao,
-                'ordem' => $categoria->ordem,
-                'ativo' => $categoria->ativo,
-            ];
-        });
+        $resposta = $useCase->execute();
 
         return response()->json([
             'status' => 'success',
             'message' => 'Categorias retornadas com sucesso',
-            'data' => $categoriasFiltrados
+            'data' => $resposta
         ]);
     }
 
