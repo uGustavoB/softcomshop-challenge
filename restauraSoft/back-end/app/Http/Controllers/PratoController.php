@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PratoRequest;
 use App\Repositories\PratoRepository;
+use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
 use Illuminate\Http\Request;
 
@@ -148,24 +149,19 @@ class PratoController extends Controller
      *      )
      * )
      */
-    public function cadastrar(PratoRequest $request, $id = null) {
-        $dados = $request->all();
+    public function cadastrar(PratoRequest $request, ICriarPratosUseCase $useCase, $id = null) {
+        $dados = $request->validated();
 
-        $prato = $this->repository->salvar($dados);
+        $resposta = $useCase->execute($dados);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Prato salvo com sucesso',
-            'data' => [
-                'id' => $prato->id,
-                'nome' => $prato->nome,
-                'descricao' => $prato->descricao,
-                'preco' => $prato->preco,
-                'imagem' => $prato->imagem,
-                'categoria_id' => $prato->categoria_id,
-                'ativo' => $prato->ativo,
-            ]
-        ]);
+        return response()->json(
+            [
+                'status' => $resposta['status'],
+                'message' => $resposta['message'],
+                'data' => $resposta['data'] ?? null,
+            ],
+            $resposta['http']
+        );
     }
 
     /**

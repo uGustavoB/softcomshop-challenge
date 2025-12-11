@@ -8,6 +8,8 @@ use App\UseCases\Categoria\EditarCategoria\EditarCategoriaUseCase;
 use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
 use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
 use App\UseCases\Categoria\ListarCategorias\ListarCategoriasUseCase;
+use App\UseCases\Pratos\CriarPratos\CriarPratosUseCase;
+use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\ListarPratosUseCase;
 use Illuminate\Support\ServiceProvider;
@@ -25,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
 //      Pratos UseCases
+        $this->app->bind(
+            ICriarPratosUseCase::class,
+            CriarPratosUseCase::class
+        );
         $this->app->bind(
             IListarPratosUseCase::class,
             ListarPratosUseCase::class
