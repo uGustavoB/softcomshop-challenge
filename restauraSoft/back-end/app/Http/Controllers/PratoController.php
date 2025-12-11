@@ -8,7 +8,6 @@ use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\DeletarPrato\IDeletarPratoUseCase;
 use App\UseCases\Pratos\EditarPratos\IEditarPratosUseCase;
 use App\UseCases\Pratos\ListarPratos\IListarPratosUseCase;
-use Illuminate\Http\Request;
 
 /**
  * @OA\Info(
@@ -26,12 +25,6 @@ use Illuminate\Http\Request;
  */
 class PratoController extends Controller
 {
-    private $repository;
-
-    public function __construct() {
-        $this->repository = new PratoRepository();
-    }
-
     /**
      * @OA\Get(
      *      path="/prato",
@@ -56,27 +49,23 @@ class PratoController extends Controller
      *                      @OA\Property(property="preco", type="number", format="float", example=30),
      *                      @OA\Property(property="imagem", type="string", example="nova_imagem.jpg"),
      *                      @OA\Property(property="categoria_id", type="integer", example=2),
-     *                      @OA\Property(property="ativo", type="integer", example=1)
+     *                      @OA\Property(property="ativo", type="boolean", example=true)
      *                  )
-     *              ),
-     *              @OA\Examples(
-     *                  example="pratos",
-     *                  value={
-     *                      "status": "success",
-     *                      "message": "Pratos retornados com sucesso",
-     *                      "data": {
-     *                          {"id": 1, "nome": "Prato Atualizado", "descricao": "Nova descrição", "preco": 30, "imagem": "nova_imagem.jpg", "categoria_id": 2, "ativo": 1},
-     *                          {"id": 4, "nome": "Prato Exemplo", "descricao": "Descrição do prato", "preco": 25.5, "imagem": "url_da_imagem.jpg", "categoria_id": 1, "ativo": 1}
-     *                      }
-     *                  },
-     *                  summary="Exemplo de retorno da listagem de pratos"
      *              )
      *          )
      *      ),
-     *     @OA\Response(
-     *           response=401,
-     *           description="Erro de autenticação"
-     *       )
+     *      @OA\Response(
+     *          response=401,
+     *          description="Erro de autenticação"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Erro interno do servidor",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Erro ao listar pratos")
+     *          )
+     *      )
      * )
      */
     public function listagem(IListarPratosUseCase $useCase)
@@ -99,18 +88,18 @@ class PratoController extends Controller
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="nome", type="string", example="Prato Exemplo"),
-     *              @OA\Property(property="descricao", type="string", example="Descrição do prato"),
-     *              @OA\Property(property="preco", type="number", format="float", example=25.5),
-     *              @OA\Property(property="imagem", type="string", example="url_da_imagem.jpg"),
-     *              @OA\Property(property="categoria_id", type="integer", example=1),
-     *              @OA\Property(property="ativo", type="boolean", example=true)
+     *              required={"nome", "descricao", "preco", "categoria_id"},
+     *              @OA\Property(property="nome", type="string", example="Prato Exemplo", description="Nome do prato (único)"),
+     *              @OA\Property(property="descricao", type="string", example="Descrição do prato", description="Descrição detalhada"),
+     *              @OA\Property(property="preco", type="number", format="float", example=25.5, description="Preço do prato"),
+     *              @OA\Property(property="imagem", type="string", example="url_da_imagem.jpg", description="URL da imagem"),
+     *              @OA\Property(property="categoria_id", type="integer", example=1, description="ID da categoria"),
+     *              @OA\Property(property="ativo", type="boolean", example=true, description="Status do prato")
      *          )
      *      ),
      *      @OA\Response(
-     *          response=200,
-     *          description="Prato salvo com sucesso",
+     *          response=201,
+     *          description="Prato criado com sucesso",
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(property="status", type="string", example="success"),
@@ -125,33 +114,36 @@ class PratoController extends Controller
      *                  @OA\Property(property="imagem", type="string", example="url_da_imagem.jpg"),
      *                  @OA\Property(property="categoria_id", type="integer", example=1),
      *                  @OA\Property(property="ativo", type="boolean", example=true)
-     *              ),
-     *              @OA\Examples(
-     *                  example="prato",
-     *                  value={
-     *                      "status": "success",
-     *                      "message": "Prato salvo com sucesso",
-     *                      "data": {
-     *                          "id": 4,
-     *                          "nome": "Prato Exemplo",
-     *                          "descricao": "Descrição do prato",
-     *                          "preco": 25.5,
-     *                          "imagem": "url_da_imagem.jpg",
-     *                          "categoria_id": 1,
-     *                          "ativo": true
-     *                      }
-     *                  },
-     *                  summary="Exemplo de retorno ao cadastrar um prato"
      *              )
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Requisição inválida",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Categoria inválida.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=409,
+     *          description="Conflito - Prato já existe",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Já existe um prato com este nome.")
      *          )
      *      ),
      *      @OA\Response(
      *          response=401,
      *          description="Erro de autenticação"
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Erro interno do servidor"
      *      )
      * )
      */
-    public function cadastrar(PratoRequest $request, ICriarPratosUseCase $useCase, $id = null) {
+    public function cadastrar(PratoRequest $request, ICriarPratosUseCase $useCase) {
         $dados = $request->validated();
 
         $resposta = $useCase->execute($dados);
@@ -182,13 +174,12 @@ class PratoController extends Controller
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="nome", type="string", example="Prato Atualizado"),
-     *              @OA\Property(property="descricao", type="string", example="Nova descrição"),
-     *              @OA\Property(property="preco", type="number", format="float", example=30),
-     *              @OA\Property(property="imagem", type="string", example="nova_imagem.jpg"),
-     *              @OA\Property(property="categoria_id", type="integer", example=2),
-     *              @OA\Property(property="ativo", type="boolean", example=true)
+     *              @OA\Property(property="nome", type="string", example="Prato Atualizado", description="Nome do prato"),
+     *              @OA\Property(property="descricao", type="string", example="Nova descrição", description="Descrição atualizada"),
+     *              @OA\Property(property="preco", type="number", format="float", example=30, description="Novo preço"),
+     *              @OA\Property(property="imagem", type="string", example="nova_imagem.jpg", description="Nova imagem"),
+     *              @OA\Property(property="categoria_id", type="integer", example=2, description="ID da categoria"),
+     *              @OA\Property(property="ativo", type="boolean", example=true, description="Status do prato")
      *          )
      *      ),
      *      @OA\Response(
@@ -197,7 +188,7 @@ class PratoController extends Controller
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(property="status", type="string", example="success"),
-     *              @OA\Property(property="message", type="string", example="Prato salvo com sucesso"),
+     *              @OA\Property(property="message", type="string", example="Prato editado com sucesso"),
      *              @OA\Property(
      *                  property="data",
      *                  type="object",
@@ -205,33 +196,35 @@ class PratoController extends Controller
      *                  @OA\Property(property="nome", type="string", example="Prato Atualizado"),
      *                  @OA\Property(property="descricao", type="string", example="Nova descrição"),
      *                  @OA\Property(property="preco", type="number", format="float", example=30),
-     *                  @OA\Property(property="imagem", type="string", example="nova_imagem.jpg"),
      *                  @OA\Property(property="categoria_id", type="integer", example=2),
      *                  @OA\Property(property="ativo", type="boolean", example=true)
-     *              ),
-     *              @OA\Examples(
-     *                  example="prato_editado",
-     *                  value={
-     *                      "status": "success",
-     *                      "message": "Prato salvo com sucesso",
-     *                      "data": {
-     *                          "id": 1,
-     *                          "nome": "Prato Atualizado",
-     *                          "descricao": "Nova descrição",
-     *                          "preco": 30,
-     *                          "imagem": "nova_imagem.jpg",
-     *                          "categoria_id": 2,
-     *                          "ativo": true
-     *                      }
-     *                  },
-     *                  summary="Exemplo de retorno ao editar um prato"
      *              )
      *          )
      *      ),
-     *     @OA\Response(
+     *      @OA\Response(
+     *          response=400,
+     *          description="Requisição inválida",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Categoria inválida.")
+     *          )
+     *      ),
+     *      @OA\Response(
      *           response=401,
      *           description="Erro de autenticação"
-     *       )
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Prato não encontrado",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Prato não encontrado.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Erro interno do servidor"
+     *      )
      * )
      */
     public function editar(PratoRequest $request, IEditarPratosUseCase $useCase, $id = null) {
@@ -265,20 +258,32 @@ class PratoController extends Controller
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(property="status", type="string", example="success"),
-     *              @OA\Property(property="message", type="string", example="Prato deletado com sucesso"),
-     *              @OA\Examples(
-     *                  example="prato_deletado",
-     *                  value={
-     *                      "status": "success",
-     *                      "message": "Prato deletado com sucesso"
-     *                  },
-     *                  summary="Exemplo de retorno ao deletar um prato"
-     *              )
+     *              @OA\Property(property="message", type="string", example="Prato deletado com sucesso")
      *          )
      *      ),
-     *     @OA\Response(
+     *      @OA\Response(
+     *          response=400,
+     *          description="ID inválido",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="ID inválido.")
+     *          )
+     *      ),
+     *      @OA\Response(
      *           response=401,
      *           description="Erro de autenticação"
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Prato não encontrado",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Prato não encontrado.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Erro interno do servidor"
      *      )
      * )
      */
