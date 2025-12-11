@@ -14,7 +14,7 @@ class CriarPratosUseCase implements ICriarPratosUseCase
         $this->repository = new PratoRepository();
     }
 
-    public function execute($dados)
+    public function execute($dados): array
     {
         try {
             if ($this->repository->existeNome($dados['nome'])) {
@@ -38,7 +38,7 @@ class CriarPratosUseCase implements ICriarPratosUseCase
                 'http' => 201
             ];
         } catch (Exception $e) {
-            Log::error("Erro ao criar categoria: " . $e->getMessage());
+            Log::error("Erro ao criar prato: " . $e->getMessage());
 
             return [
                 'status' => 'error',

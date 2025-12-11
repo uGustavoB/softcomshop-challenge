@@ -4,5 +4,5 @@ namespace App\UseCases\Pratos\CriarPratos;
 
 interface ICriarPratosUseCase
 {
-    public function execute($dados);
+    public function execute($dados): array;
 }
