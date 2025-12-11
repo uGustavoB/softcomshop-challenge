@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoriaRequest;
 use App\Repositories\CategoriaRepository;
 use App\UseCases\Categoria\CriarCategorias\ICriarCategoriasUseCase;
+use App\UseCases\Categoria\DeletarCategoria\IDeletarCategoriaUseCase;
 use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
 use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
-use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
@@ -44,7 +44,7 @@ class CategoriaController extends Controller
         );
     }
 
-    public function editar(CategoriaRequest $request, IEditarCategoriaUseCase $useCase, $id = null) {
+    public function editar(CategoriaRequest $request, IEditarCategoriaUseCase $useCase, $id) {
         $resultado = $useCase->execute($request, $id);
 
         return response()->json(
@@ -57,11 +57,16 @@ class CategoriaController extends Controller
         );
     }
 
-    public function deletar(Request $request, $id) {
-        $retorno = $this->repository->deletar($id);
-        return response()->json([
-            'status' => $retorno ? 'success' : 'error',
-            'message' => $retorno ? "Categoria deletada com sucesso" : "Erro ao deletar",
-        ]);
+    public function deletar(IDeletarCategoriaUseCase $useCase, $id ) {
+        $resultado = $useCase->execute($id);
+
+        return response()->json(
+            [
+                'status' => $resultado['status'],
+                'message' => $resultado['message'],
+                'data' => $resultado['data'] ?? null,
+            ],
+            $resultado['http']
+        );
     }
 }

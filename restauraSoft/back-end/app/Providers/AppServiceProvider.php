@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\UseCases\Categoria\DeletarCategoria\DeletarCategoriaUseCase;
+use App\UseCases\Categoria\DeletarCategoria\IDeletarCategoriaUseCase;
 use App\UseCases\Categoria\EditarCategoria\EditarCategoriaUseCase;
 use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
 use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
@@ -32,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IEditarCategoriaUseCase::class,
             EditarCategoriaUseCase::class
+        );
+        $this->app->bind(
+            IDeletarCategoriaUseCase::class,
+            DeletarCategoriaUseCase::class
         );
     }
 
