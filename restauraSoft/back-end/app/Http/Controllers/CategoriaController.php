@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoriaRequest;
 use App\Repositories\CategoriaRepository;
 use App\UseCases\Categoria\CriarCategorias\ICriarCategoriasUseCase;
+use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
 use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
 use Illuminate\Http\Request;
 
@@ -43,26 +44,23 @@ class CategoriaController extends Controller
         );
     }
 
-    public function editar(CategoriaRequest $request, $id = null) {
-        $dados = $request->all();
+    public function editar(CategoriaRequest $request, $id = null, IEditarCategoriaUseCase $useCase) {
+        $dados = $request->validated();
 
         if ($id) {
             $dados['id'] = $id;
         }
 
-        $categoria = $this->repository->salvar($dados);
+        $resultado = $useCase->execute($request, $dados);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Categoria salva com sucesso',
-            'data' => [
-                'id' => $categoria->id,
-                'nome' => $categoria->nome,
-                'descricao' => $categoria->descricao,
-                'ordem' => $categoria->ordem,
-                'ativo' => $categoria->ativo,
-            ]
-        ]);
+        return response()->json(
+            [
+                'status' => $resultado['status'],
+                'message' => $resultado['message'],
+                'data' => $resultado['data'] ?? null,
+            ],
+            $resultado['http']
+        );
     }
 
     public function deletar(Request $request, $id) {
