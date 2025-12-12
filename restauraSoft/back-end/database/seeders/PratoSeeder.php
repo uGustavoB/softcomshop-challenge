@@ -98,7 +98,5 @@ class PratoSeeder extends Seeder
         foreach ($pratos as $pratoData) {
             Prato::create($pratoData);
         }
-
-        $this->command->info(Prato::count() . ' pratos criados com sucesso!');
     }
 }
