@@ -44,6 +44,16 @@ Route::group([
     Route::delete('/{id}', 'App\Http\Controllers\CategoriaController@deletar');
 });
 
+Route::group([
+    'middleware' => 'jwt.auth',
+    'prefix' => 'mesa'
+], function () {
+    Route::get('/', 'App\Http\Controllers\MesaController@listagem');
+    Route::post('/', 'App\Http\Controllers\MesaController@cadastrar');
+    Route::put('/{id}', 'App\Http\Controllers\MesaController@editar');
+    Route::delete('/{id}', 'App\Http\Controllers\MesaController@deletar');
+});
+
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //    return $request->user();
 //});

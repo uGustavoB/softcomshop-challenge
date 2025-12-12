@@ -10,6 +10,8 @@ use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
 use App\UseCases\Categoria\ListarCategorias\ListarCategoriasUseCase;
 use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use App\UseCases\Categoria\VerificarCategoria\VerificarCategoriaUseCase;
+use App\UseCases\Mesa\ListarMesa\IListarMesaUseCase;
+use App\UseCases\Mesa\ListarMesa\ListarMesaUseCase;
 use App\UseCases\Pratos\CriarPratos\CriarPratosUseCase;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\DeletarPrato\DeletarPratoUseCase;
@@ -70,6 +72,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IVerificarCategoriaUseCase::class,
             VerificarCategoriaUseCase::class
+        );
+
+//      Mesa
+        $this->app->bind(
+            IListarMesaUseCase::class,
+            ListarMesaUseCase::class
         );
     }
 
