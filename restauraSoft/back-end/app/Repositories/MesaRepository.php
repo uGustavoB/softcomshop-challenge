@@ -46,4 +46,9 @@ class MesaRepository extends BaseRepository
 
         return $model;
     }
+
+    public function buscarPorId($id)
+    {
+        return $this->model()::find($id);
+    }
 }

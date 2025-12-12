@@ -12,6 +12,8 @@ use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use App\UseCases\Categoria\VerificarCategoria\VerificarCategoriaUseCase;
 use App\UseCases\Mesa\CriarMesa\CriarMesaUseCase;
 use App\UseCases\Mesa\CriarMesa\ICriarMesaUseCase;
+use App\UseCases\Mesa\EditarMesa\EditarMesaUseCase;
+use App\UseCases\Mesa\EditarMesa\IEditarMesaUseCase;
 use App\UseCases\Mesa\ListarMesa\IListarMesaUseCase;
 use App\UseCases\Mesa\ListarMesa\ListarMesaUseCase;
 use App\UseCases\Pratos\CriarPratos\CriarPratosUseCase;
@@ -84,6 +86,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ICriarMesaUseCase::class,
             CriarMesaUseCase::class
+        );
+        $this->app->bind(
+            IEditarMesaUseCase::class,
+            EditarMesaUseCase::class
         );
     }
 
