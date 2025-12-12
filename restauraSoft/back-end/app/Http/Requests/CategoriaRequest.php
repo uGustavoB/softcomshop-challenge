@@ -24,7 +24,10 @@ class CategoriaRequest extends FormRequest
     public function rules()
     {
         return [
-            "nome" => "required",
+            "nome" => "required|string|max:100",
+            "descricao" => "nullable|string",
+            "ordem" => "nullable|integer|min:1",
+            "ativo" => "nullable|boolean",
         ];
     }
 }

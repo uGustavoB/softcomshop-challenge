@@ -24,10 +24,12 @@ class PratoRequest extends FormRequest
     public function rules()
     {
         return [
-            "nome" => "required",
-            "descricao" => "required",
-            "preco" => "required",
-            "categoria_id" => "required"
+            "nome" => "required|string|max:255",
+            "descricao" => "nullable|string",
+            "preco" => "required|numeric|min:0",
+            "imagem" => "nullable|string",
+            "categoria_id" => "nullable|integer|exists:categorias,id",
+            "ativo" => "nullable|boolean",
         ];
     }
 }
