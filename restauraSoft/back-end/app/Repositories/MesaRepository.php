@@ -51,4 +51,9 @@ class MesaRepository extends BaseRepository
     {
         return $this->model()::find($id);
     }
+
+    public function deletar(int $id)
+    {
+        return $this->model()::destroy($id);
+    }
 }
