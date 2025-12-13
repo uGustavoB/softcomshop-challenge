@@ -15,7 +15,6 @@ class CreatePedidosTable extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo')->unique();
             $table->foreignId('mesa_id')->constrained()->onDelete('restrict');
             $table->enum('status', ['pendente', 'em_preparo', 'pronto', 'entregue', 'cancelado', 'finalizado'])->default('pendente');
             $table->enum('tipo_pedido', ['local', 'delivery', 'retirada'])->default('local');

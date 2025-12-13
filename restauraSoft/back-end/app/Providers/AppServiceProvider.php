@@ -18,6 +18,14 @@ use App\UseCases\Mesa\EditarMesa\EditarMesaUseCase;
 use App\UseCases\Mesa\EditarMesa\IEditarMesaUseCase;
 use App\UseCases\Mesa\ListarMesa\IListarMesaUseCase;
 use App\UseCases\Mesa\ListarMesa\ListarMesaUseCase;
+use App\UseCases\Pedido\CriarPedido\CriarPedidoUseCase;
+use App\UseCases\Pedido\CriarPedido\ICriarPedidoUseCase;
+use App\UseCases\Pedido\DeletarPedido\DeletarPedidoUseCase;
+use App\UseCases\Pedido\DeletarPedido\IDeletarPedidoUseCase;
+use App\UseCases\Pedido\EditarPedido\EditarPedidoUseCase;
+use App\UseCases\Pedido\EditarPedido\IEditarPedidoUseCase;
+use App\UseCases\Pedido\ListarPedidos\IListarPedidosUseCase;
+use App\UseCases\Pedido\ListarPedidos\ListarPedidosUseCase;
 use App\UseCases\Pratos\CriarPratos\CriarPratosUseCase;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\DeletarPrato\DeletarPratoUseCase;
@@ -96,6 +104,24 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IDeletarMesaUseCase::class,
             DeletarMesaUseCase::class
+        );
+
+//      Pedido
+        $this->app->bind(
+            IListarPedidosUseCase::class,
+            ListarPedidosUseCase::class
+        );
+        $this->app->bind(
+            ICriarPedidoUseCase::class,
+            CriarPedidoUseCase::class
+        );
+        $this->app->bind(
+            IEditarPedidoUseCase::class,
+            EditarPedidoUseCase::class
+        );
+        $this->app->bind(
+            IDeletarPedidoUseCase::class,
+            DeletarPedidoUseCase::class
         );
     }
 
