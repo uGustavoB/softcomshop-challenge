@@ -10,6 +10,14 @@ use App\UseCases\Categoria\ListarCategorias\IListarCategoriasUseCase;
 use App\UseCases\Categoria\ListarCategorias\ListarCategoriasUseCase;
 use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use App\UseCases\Categoria\VerificarCategoria\VerificarCategoriaUseCase;
+use App\UseCases\ItensPedido\CriarItemPedido\CriarItemPedidoUseCase;
+use App\UseCases\ItensPedido\CriarItemPedido\ICriarItemPedidoUseCase;
+use App\UseCases\ItensPedido\DeletarItemPedido\DeletarItemPedidoUseCase;
+use App\UseCases\ItensPedido\DeletarItemPedido\IDeletarItemPedidoUseCase;
+use App\UseCases\ItensPedido\EditarItemPedido\EditarItemPedidoUseCase;
+use App\UseCases\ItensPedido\EditarItemPedido\IEditarItemPedidoUseCase;
+use App\UseCases\ItensPedido\ListarItensPedido\IListarItensPedidoUseCase;
+use App\UseCases\ItensPedido\ListarItensPedido\ListarItensPedidoUseCase;
 use App\UseCases\Mesa\CriarMesa\CriarMesaUseCase;
 use App\UseCases\Mesa\CriarMesa\ICriarMesaUseCase;
 use App\UseCases\Mesa\DeletarMesa\DeletarMesaUseCase;
@@ -122,6 +130,24 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IDeletarPedidoUseCase::class,
             DeletarPedidoUseCase::class
+        );
+
+//      Itens de pedido
+        $this->app->bind(
+            IListarItensPedidoUseCase::class,
+            ListarItensPedidoUseCase::class
+        );
+        $this->app->bind(
+            ICriarItemPedidoUseCase::class,
+            CriarItemPedidoUseCase::class
+        );
+        $this->app->bind(
+            IEditarItemPedidoUseCase::class,
+            EditarItemPedidoUseCase::class
+        );
+        $this->app->bind(
+            IDeletarItemPedidoUseCase::class,
+            DeletarItemPedidoUseCase::class
         );
     }
 

@@ -64,6 +64,17 @@ Route::group([
     Route::delete('/{id}', 'App\Http\Controllers\PedidoController@deletar');
 });
 
+Route::group([
+    'middleware' => 'jwt.auth',
+    'prefix' => 'pedido'
+], function () {
+    Route::get('/{id}/itens', 'App\Http\Controllers\PedidoItemController@listagem');
+    Route::post('/{id}/itens', 'App\Http\Controllers\PedidoItemController@cadastrar');
+    Route::put('/{id}/itens/{itemId}', 'App\Http\Controllers\PedidoItemController@editar');
+    Route::delete('/{id}/itens/{itemId}', 'App\Http\Controllers\PedidoItemController@deletar');
+});
+
+
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
