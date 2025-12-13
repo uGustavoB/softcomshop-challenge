@@ -28,7 +28,7 @@ class CriarPedidoUseCase implements ICriarPedidoUseCase
     {
         try {
             if (isset($dados['mesa_id'])) {
-                $mesaExistente = $this->mesaRepository->buscarPorId($dados['id']);
+                $mesaExistente = $this->mesaRepository->buscarPorId($dados['mesa_id']);
 
                 if (!$mesaExistente) {
                     return [
