@@ -78,9 +78,6 @@ class CriarItemPedidoUseCase implements ICriarItemPedidoUseCase
 
             DB::commit();
 
-//          Gustavo - Atualizar o valor total do pedido ao adicionar um novo item
-//          Gustavo - Atualizar status da mesa ao adicionar item ao pedido
-
             return [
                 'status' => 'success',
                 'message' => 'Item de pedido criado com sucesso',
