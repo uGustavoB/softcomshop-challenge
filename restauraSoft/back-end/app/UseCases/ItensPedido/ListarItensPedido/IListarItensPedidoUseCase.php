@@ -4,5 +4,5 @@ namespace App\UseCases\ItensPedido\ListarItensPedido;
 
 interface IListarItensPedidoUseCase
 {
-    public function execute();
+    public function execute($pedidoId);
 }

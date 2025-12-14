@@ -18,6 +18,8 @@ use App\UseCases\ItensPedido\EditarItemPedido\EditarItemPedidoUseCase;
 use App\UseCases\ItensPedido\EditarItemPedido\IEditarItemPedidoUseCase;
 use App\UseCases\ItensPedido\ListarItensPedido\IListarItensPedidoUseCase;
 use App\UseCases\ItensPedido\ListarItensPedido\ListarItensPedidoUseCase;
+use App\UseCases\Mesa\AtualizarStatusMesa\AtualizarStatusMesaUseCase;
+use App\UseCases\Mesa\AtualizarStatusMesa\IAtualizarStatusMesaUseCase;
 use App\UseCases\Mesa\CriarMesa\CriarMesaUseCase;
 use App\UseCases\Mesa\CriarMesa\ICriarMesaUseCase;
 use App\UseCases\Mesa\DeletarMesa\DeletarMesaUseCase;
@@ -26,6 +28,8 @@ use App\UseCases\Mesa\EditarMesa\EditarMesaUseCase;
 use App\UseCases\Mesa\EditarMesa\IEditarMesaUseCase;
 use App\UseCases\Mesa\ListarMesa\IListarMesaUseCase;
 use App\UseCases\Mesa\ListarMesa\ListarMesaUseCase;
+use App\UseCases\Pedido\AtualizarValorTotalPedido\AtualizarValorTotalPedidoUseCase;
+use App\UseCases\Pedido\AtualizarValorTotalPedido\IAtualizarValorTotalPedidoUseCase;
 use App\UseCases\Pedido\CriarPedido\CriarPedidoUseCase;
 use App\UseCases\Pedido\CriarPedido\ICriarPedidoUseCase;
 use App\UseCases\Pedido\DeletarPedido\DeletarPedidoUseCase;
@@ -113,6 +117,10 @@ class AppServiceProvider extends ServiceProvider
             IDeletarMesaUseCase::class,
             DeletarMesaUseCase::class
         );
+        $this->app->bind(
+            IAtualizarStatusMesaUseCase::class,
+            AtualizarStatusMesaUseCase::class
+        );
 
 //      Pedido
         $this->app->bind(
@@ -130,6 +138,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IDeletarPedidoUseCase::class,
             DeletarPedidoUseCase::class
+        );
+        $this->app->bind(
+            IAtualizarValorTotalPedidoUseCase::class,
+            AtualizarValorTotalPedidoUseCase::class
         );
 
 //      Itens de pedido

@@ -4,5 +4,5 @@ namespace App\UseCases\ItensPedido\DeletarItemPedido;
 
 interface IDeletarItemPedidoUseCase
 {
-    public function execute($id);
+    public function execute($id, $pedidoId);
 }

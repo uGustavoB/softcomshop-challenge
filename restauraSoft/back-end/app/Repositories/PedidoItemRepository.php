@@ -56,4 +56,9 @@ class PedidoItemRepository extends BaseRepository
 
         return true;
     }
+
+    public function buscarPorPedidoId($pedidoId)
+    {
+        return $this->model()::where('pedido_id', $pedidoId)->get();
+    }
 }

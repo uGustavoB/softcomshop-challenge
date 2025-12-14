@@ -68,10 +68,10 @@ Route::group([
     'middleware' => 'jwt.auth',
     'prefix' => 'pedido'
 ], function () {
-    Route::get('/{id}/itens', 'App\Http\Controllers\PedidoItemController@listagem');
-    Route::post('/{id}/itens', 'App\Http\Controllers\PedidoItemController@cadastrar');
-    Route::put('/{id}/itens/{itemId}', 'App\Http\Controllers\PedidoItemController@editar');
-    Route::delete('/{id}/itens/{itemId}', 'App\Http\Controllers\PedidoItemController@deletar');
+    Route::get('/{pedidoId}/itens', 'App\Http\Controllers\PedidoItemController@listagem');
+    Route::post('/{pedidoId}/itens', 'App\Http\Controllers\PedidoItemController@cadastrar');
+    Route::put('/{pedidoId}/itens/{id}', 'App\Http\Controllers\PedidoItemController@editar');
+    Route::delete('/{pedidoId}/itens/{id}', 'App\Http\Controllers\PedidoItemController@deletar');
 });
 
 

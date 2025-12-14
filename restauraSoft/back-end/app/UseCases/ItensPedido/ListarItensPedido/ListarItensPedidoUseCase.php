@@ -14,9 +14,9 @@ class ListarItensPedidoUseCase implements IListarItensPedidoUseCase
         $this->repository = $repository;
     }
 
-    public function execute()
+    public function execute($pedidoId)
     {
-        $itensPedido = $this->repository->listagem();
+        $itensPedido = $this->repository->buscarPorPedidoId($pedidoId);
 
         return $itensPedido->map(function($item) {
             return [

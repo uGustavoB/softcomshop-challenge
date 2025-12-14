@@ -50,4 +50,17 @@ class Pedido extends Model
     {
         return in_array($this->status, ['pendente', 'em_preparo']);
     }
+
+    public function podeAdicionarItens()
+    {
+        return in_array($this->status, ['pendente', 'em_andamento', 'novo']);
+    }
+
+    public function atualizarTotal()
+    {
+        $this->valor_total = $this->calcularTotal();
+        $this->save();
+
+        return $this->valor_total;
+    }
 }

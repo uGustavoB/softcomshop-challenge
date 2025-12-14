@@ -24,7 +24,6 @@ class PedidoItemRequest extends FormRequest
     public function rules()
     {
         return [
-            "pedido_id" => "required|integer|exists:pedidos,id",
             "prato_id" => "required|integer|exists:pratos,id",
             "quantidade" => "required|integer|min:1",
             "preco_unitario" => "required|numeric|min:0",

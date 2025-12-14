@@ -10,9 +10,9 @@ use App\UseCases\ItensPedido\ListarItensPedido\IListarItensPedidoUseCase;
 
 class PedidoItemController extends Controller
 {
-    public function listagem(IListarItensPedidoUseCase $useCase)
+    public function listagem(IListarItensPedidoUseCase $useCase, $pedidoId)
     {
-        $resposta = $useCase->execute();
+        $resposta = $useCase->execute($pedidoId);
 
         return response()->json([
             'status' => 'success',
@@ -21,8 +21,10 @@ class PedidoItemController extends Controller
         ]);
     }
 
-    public function cadastrar(PedidoItemRequest $request, ICriarItemPedidoUseCase $useCase) {
+    public function cadastrar(PedidoItemRequest $request, ICriarItemPedidoUseCase $useCase, $pedidoId) {
         $dados = $request->validated();
+
+        $dados['pedido_id'] = $pedidoId;
 
         $resposta = $useCase->execute($dados);
 
@@ -36,8 +38,8 @@ class PedidoItemController extends Controller
         );
     }
 
-    public function editar(PedidoItemRequest $request, IEditarItemPedidoUseCase $useCase, $id) {
-        $resposta = $useCase->execute($request, $id);
+    public function editar(PedidoItemRequest $request, IEditarItemPedidoUseCase $useCase, $pedidoId, $id) {
+        $resposta = $useCase->execute($request, $id, $pedidoId);
 
         return response()->json(
             [
@@ -49,8 +51,8 @@ class PedidoItemController extends Controller
         );
     }
 
-    public function deletar(IDeletarItemPedidoUseCase $useCase, $id ) {
-        $resposta = $useCase->execute($id);
+    public function deletar(IDeletarItemPedidoUseCase $useCase, $pedidoId, $id) {
+        $resposta = $useCase->execute($id, $pedidoId);
 
         return response()->json(
             [
