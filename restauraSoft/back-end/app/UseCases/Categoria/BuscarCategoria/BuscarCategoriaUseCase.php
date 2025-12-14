@@ -30,7 +30,7 @@ class BuscarCategoriaUseCase implements IBuscarCategoriaUseCase
                 'http' => 200
             ];
         } catch (\Exception $e) {
-            Log::error("Erro ao buscar prato: " . $e->getMessage());
+            Log::error("Erro ao buscar categoria: " . $e->getMessage());
 
             return [
                 'status' => 'error',

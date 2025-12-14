@@ -31,12 +31,7 @@ class CriarMesaUseCase implements ICriarMesaUseCase
             return [
                 'status' => 'success',
                 'message' => 'Mesa criada com sucesso',
-                'data' => [
-                    'numero' => $mesa->numero,
-                    'capacidade' => $mesa->capacidade,
-                    'status' => $mesa->status,
-                    'localizacao' => $mesa->localizacao,
-                ],
+                'data' => $mesa->toDto(),
                 'http' => 201
             ];
 

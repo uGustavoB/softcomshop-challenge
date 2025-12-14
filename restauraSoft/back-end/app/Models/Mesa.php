@@ -18,6 +18,17 @@ class Mesa extends Model
         'capacidade' => 'integer'
     ];
 
+    public function toDto(): array
+    {
+        return [
+            'id' => $this->id,
+            'numero' => $this->numero,
+            'capacidade' => $this->capacidade,
+            'status' => $this->status,
+            'localizacao' => $this->localizacao
+        ];
+    }
+
     public function pedidos()
     {
         return $this->hasMany(Pedido::class);

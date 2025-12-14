@@ -46,12 +46,7 @@ class EditarMesaUseCase implements IEditarMesaUseCase
             return [
                 'status' => 'success',
                 'message' => 'Mesa editada com sucesso',
-                'data' => [
-                    'numero' => $mesa->numero,
-                    'capacidade' => $mesa->capacidade,
-                    'status' => $mesa->status,
-                    'localizacao' => $mesa->localizacao,
-                ],
+                'data' => $mesa->toDto(),
                 'http' => 200
             ];
         } catch (Exception $e) {

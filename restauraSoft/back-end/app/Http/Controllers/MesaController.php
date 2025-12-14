@@ -6,6 +6,7 @@ use App\Http\Requests\CategoriaRequest;
 use App\Http\Requests\MesaRequest;
 use App\UseCases\Categoria\DeletarCategoria\IDeletarCategoriaUseCase;
 use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
+use App\UseCases\Mesa\BuscarMesa\IBuscarMesaUseCase;
 use App\UseCases\Mesa\CriarMesa\ICriarMesaUseCase;
 use App\UseCases\Mesa\DeletarMesa\IDeletarMesaUseCase;
 use App\UseCases\Mesa\EditarMesa\IEditarMesaUseCase;
@@ -19,7 +20,18 @@ class MesaController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Categorias retornadas com sucesso',
+            'message' => 'Mesas retornadas com sucesso',
+            'data' => $resposta
+        ]);
+    }
+
+    public function buscar(IBuscarMesaUseCase $useCase, $id)
+    {
+        $resposta = $useCase->execute($id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Mesa retornada com sucesso',
             'data' => $resposta
         ]);
     }

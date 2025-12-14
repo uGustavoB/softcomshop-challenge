@@ -16,16 +16,10 @@ class ListarMesaUseCase implements IListarMesaUseCase
 
     public function execute()
     {
-        $categorias = $this->repository->listagem();
+        $mesas = $this->repository->listagem();
 
-        return $categorias->map(function($categoria) {
-            return [
-                'id' => $categoria->id,
-                'numero' => $categoria->numero,
-                'capacidade' => $categoria->capacidade,
-                'status' => $categoria->status,
-                'localizacao' => $categoria->localizacao,
-            ];
+        return $mesas->map(function($mesa) {
+            return $mesa->toDto();
         });
     }
 }
