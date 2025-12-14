@@ -80,7 +80,77 @@ class PratoController extends Controller
         ]);
     }
 
-//  Gustavo - Fazer documentação
+    /**
+     * @OA\Get(
+     *      path="/prato/{id}",
+     *      summary="Busca um prato específico pelo ID",
+     *      tags={"Prato"},
+     *      security={{"bearerAuth": {}}},
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          description="ID do prato a ser buscado",
+     *          @OA\Schema(type="integer", example=1)
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Prato retornado com sucesso",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="success"),
+     *              @OA\Property(property="message", type="string", example="Prato retornado com sucesso"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  @OA\Property(property="id", type="integer", example=1),
+     *                  @OA\Property(property="nome", type="string", example="Bruschetta Clássica"),
+     *                  @OA\Property(property="descricao", type="string", example="Pão italiano torrado com tomate fresco, manjericão e azeite"),
+     *                  @OA\Property(property="preco", type="number", format="float", example=24.9),
+     *                  @OA\Property(property="imagem", type="string", example="bruschetta.jpg"),
+     *                  @OA\Property(property="categoria_id", type="integer", example=1),
+     *                  @OA\Property(property="ativo", type="integer", example=1, description="1 para ativo, 0 para inativo")
+     *              )
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="ID inválido ou não fornecido",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="ID inválido ou não fornecido.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Prato não encontrado",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Prato não encontrado.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Não autenticado",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Token de autenticação inválido")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Erro interno do servidor",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Erro ao buscar prato")
+     *          )
+     *      )
+     * )
+     */
     public function buscar(IBuscarPratoUseCase $useCase, $id)
     {
         $resposta = $useCase->execute($id);
