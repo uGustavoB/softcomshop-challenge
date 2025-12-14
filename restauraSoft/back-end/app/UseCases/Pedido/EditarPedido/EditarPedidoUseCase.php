@@ -25,27 +25,28 @@ class EditarPedidoUseCase implements IEditarPedidoUseCase
     {
         $dados = $request->validated();
 
-        if ($id) {
-            $dados['id'] = $id;
-        }
-
         try {
-            if (isset($dados['mesa_id'])) {
-                $mesaExistente = $this->mesaRepository->buscarPorId($dados['id']);
+            $pedidoExistente = $this->repository->buscarPorId($id);
 
-                if (!$mesaExistente) {
-                    throw new \Exception("Mesa não encontrada.", 404);
-                }
-            } else {
-                throw new \Exception('ID da mesa não fornecido.');
+            if (!$pedidoExistente) {
+                throw new \Exception('Pedido não encontrado.', 404);
             }
 
-            $pedido =  $this->repository->salvar($dados)->fresh();
+            if (isset($dados['mesa_id'])) {
+                $mesaExistente = $this->mesaRepository->buscarPorId($dados['mesa_id']);
+
+                if (!$mesaExistente) {
+                    throw new \Exception('Mesa não encontrada.', 404);
+                }
+            }
+
+            $pedidoExistente->fill($dados);
+            $pedidoExistente->save();
 
             return [
                 'status' => 'success',
                 'message' => 'Pedido editado com sucesso',
-                'data' => $pedido->toDto(),
+                'data' => $pedidoExistente->toDto(),
                 'http' => 200
             ];
         } catch (Exception $e) {
