@@ -80,7 +80,7 @@ class CategoriaController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Categorias retornadas com sucesso',
+            'message' => 'Categoria retornadas com sucesso',
             'data' => $resposta
         ]);
     }
