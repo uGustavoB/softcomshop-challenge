@@ -81,15 +81,7 @@ class CriarItemPedidoUseCase implements ICriarItemPedidoUseCase
             return [
                 'status' => 'success',
                 'message' => 'Item de pedido criado com sucesso',
-                'data' => [
-                    'id' => $itemPedido->id,
-                    'pedido_id' => $itemPedido->pedido_id,
-                    'prato_id' => $itemPedido->prato_id,
-                    'quantidade' => $itemPedido->quantidade,
-                    'preco_unitario' => $itemPedido->preco_unitario,
-                    'observacoes' => $itemPedido->observacoes,
-                    'status_item' => $itemPedido->status_item,
-                ],
+                'data' => $itemPedido->toDto(),
                 'http' => 201
             ];
         } catch (Exception $e) {

@@ -39,7 +39,12 @@ class PedidoItemController extends Controller
     }
 
     public function editar(PedidoItemRequest $request, IEditarItemPedidoUseCase $useCase, $pedidoId, $id) {
-        $resposta = $useCase->execute($request, $id, $pedidoId);
+        $dados = $request->validated();
+
+        $dados['id'] = $id;
+        $dados['pedido_id'] = $pedidoId;
+
+        $resposta = $useCase->execute($dados, $id, $pedidoId);
 
         return response()->json(
             [

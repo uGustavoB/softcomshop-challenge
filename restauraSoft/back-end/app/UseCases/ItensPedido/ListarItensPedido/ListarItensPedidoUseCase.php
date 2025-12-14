@@ -19,15 +19,7 @@ class ListarItensPedidoUseCase implements IListarItensPedidoUseCase
         $itensPedido = $this->repository->buscarPorPedidoId($pedidoId);
 
         return $itensPedido->map(function($item) {
-            return [
-                'id' => $item->id,
-                'pedido_id' => $item->pedido_id,
-                'prato_id' => $item->prato_id,
-                'quantidade' => $item->quantidade,
-                'preco_unitario' => $item->preco_unitario,
-                'observacoes' => $item->observacoes,
-                'status_item' => $item->status_item,
-            ];
+            return $item->toDto();
         });
     }
 }

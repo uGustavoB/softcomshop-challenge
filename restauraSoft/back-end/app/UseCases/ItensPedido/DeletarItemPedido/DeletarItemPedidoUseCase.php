@@ -34,32 +34,17 @@ class DeletarItemPedidoUseCase implements IDeletarItemPedidoUseCase
             DB::beginTransaction();
 
             if (empty($id) && $id !== 0) {
-                return [
-                    'status' => 'error',
-                    'message' => 'ID do pedido não fornecido.',
-                    'data' => null,
-                    'http' => 400
-                ];
+                throw new \Exception("ID do item não fornecido.", 400);
             }
 
             if ($id == 0) {
-                return [
-                    'status' => 'error',
-                    'message' => 'ID inválido.',
-                    'data' => null,
-                    'http' => 400
-                ];
+                throw new \Exception("ID inválido.", 400);
             }
 
             $itemExistente = $this->repository->capturar($id);
 
             if (!$itemExistente) {
-                return [
-                    'status' => 'error',
-                    'message' => 'Item não encontrado.',
-                    'data' => null,
-                    'http' => 404
-                ];
+                throw new \Exception("Item não encontrado.", 404);
             }
 
             if (!$itemExistente->relationLoaded('pedido')) {
@@ -99,11 +84,7 @@ class DeletarItemPedidoUseCase implements IDeletarItemPedidoUseCase
             return [
                 'status' => 'success',
                 'message' => 'Item deletado com sucesso',
-                'data' => [
-                    'id' => $id,
-                    'pedido_id' => $pedidoId,
-                    'pedido' => $pedido,
-                ],
+                'data' => null,
                 'http' => 200
             ];
         } catch (\Exception $e) {

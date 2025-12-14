@@ -23,6 +23,19 @@ class PedidoItem extends Model
         'quantidade' => 'integer'
     ];
 
+    public function toDto():array
+    {
+        return [
+            'id' => $this->id,
+            'pedido_id' => $this->pedido_id,
+            'prato_id' => $this->prato_id,
+            'quantidade' => $this->quantidade,
+            'preco_unitario' => $this->preco_unitario,
+            'observacoes' => $this->observacoes,
+            'status_item' => $this->status_item,
+        ];
+    }
+
     // Relacionamentos
     public function pedido()
     {
