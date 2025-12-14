@@ -23,6 +23,21 @@ class Pedido extends Model
         'data_pedido' => 'datetime'
     ];
 
+    public function toDto(): array
+    {
+        return [
+            'id' => $this->id,
+            'mesa_id' => $this->mesa_id,
+            'usuario_id' => $this->usuario_id,
+            'status' => $this->status,
+            'tipo_pedido' => $this->tipo_pedido,
+            'forma_pagamento' => $this->forma_pagamento,
+            'valor_total' => $this->valor_total,
+            'observacoes' => $this->observacoes,
+            'data_pedido' => $this->data_pedido,
+        ];
+    }
+
     // Relacionamentos
     public function mesa()
     {

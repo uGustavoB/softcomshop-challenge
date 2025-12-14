@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CategoriaRequest;
 use App\Http\Requests\PedidoRequest;
-use App\UseCases\Categoria\DeletarCategoria\IDeletarCategoriaUseCase;
-use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
+use App\UseCases\Pedido\BuscarPedido\IBuscarPedidoUseCase;
 use App\UseCases\Pedido\CriarPedido\ICriarPedidoUseCase;
 use App\UseCases\Pedido\DeletarPedido\IDeletarPedidoUseCase;
 use App\UseCases\Pedido\EditarPedido\IEditarPedidoUseCase;
@@ -20,6 +18,17 @@ class PedidoController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Pedidos retornadas com sucesso',
+            'data' => $resposta
+        ]);
+    }
+
+    public function buscar(IBuscarPedidoUseCase $useCase, $id)
+    {
+        $resposta = $useCase->execute($id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Pedido retornado com sucesso',
             'data' => $resposta
         ]);
     }

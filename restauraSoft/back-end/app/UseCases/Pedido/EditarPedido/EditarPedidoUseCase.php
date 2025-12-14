@@ -34,12 +34,7 @@ class EditarPedidoUseCase implements IEditarPedidoUseCase
                 $mesaExistente = $this->mesaRepository->buscarPorId($dados['id']);
 
                 if (!$mesaExistente) {
-                    return [
-                        'status' => 'error',
-                        'message' => 'Mesa não encontrada.',
-                        'data' => null,
-                        'http' => 404
-                    ];
+                    throw new \Exception("Mesa não encontrada.", 404);
                 }
             } else {
                 throw new \Exception('ID da mesa não fornecido.');
@@ -50,16 +45,7 @@ class EditarPedidoUseCase implements IEditarPedidoUseCase
             return [
                 'status' => 'success',
                 'message' => 'Pedido editado com sucesso',
-                'data' => [
-                    'id' => $pedido->id,
-                    'mesa_id' => $pedido->mesa_id,
-                    'status' => $pedido->status,
-                    'tipo_pedido' => $pedido->tipo_pedido,
-                    'forma_pagamento' => $pedido->forma_pagamento,
-                    'valor_total' => $pedido->valor_total,
-                    'observacoes' => $pedido->observacoes,
-                    'data_pedido' => $pedido->data_pedido,
-                ],
+                'data' => $pedido->toDto(),
                 'http' => 200
             ];
         } catch (Exception $e) {

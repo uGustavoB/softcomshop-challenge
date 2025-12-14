@@ -20,32 +20,17 @@ class DeletarPedidoUseCase implements IDeletarPedidoUseCase
     {
         try {
             if (empty($id) && $id !== 0) {
-                return [
-                    'status' => 'error',
-                    'message' => 'ID do pedido não fornecido.',
-                    'data' => null,
-                    'http' => 400
-                ];
+                throw new \Exception('ID do pedido não fornecido.', 400);
             }
 
             if ($id == 0) {
-                return [
-                    'status' => 'error',
-                    'message' => 'ID inválido.',
-                    'data' => null,
-                    'http' => 400
-                ];
+                throw new \Exception('ID inválido.', 400);
             }
 
             $pedidoExistente = $this->repository->buscarPorId($id);
 
             if (!$pedidoExistente) {
-                return [
-                    'status' => 'error',
-                    'message' => 'Pedido não encontrada.',
-                    'data' => null,
-                    'http' => 404
-                ];
+                throw new \Exception("Pedido não encontrado.", 404);
             }
 
             $this->repository->deletar($id);

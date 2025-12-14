@@ -34,6 +34,8 @@ use App\UseCases\Mesa\ListarMesa\IListarMesaUseCase;
 use App\UseCases\Mesa\ListarMesa\ListarMesaUseCase;
 use App\UseCases\Pedido\AtualizarValorTotalPedido\AtualizarValorTotalPedidoUseCase;
 use App\UseCases\Pedido\AtualizarValorTotalPedido\IAtualizarValorTotalPedidoUseCase;
+use App\UseCases\Pedido\BuscarPedido\BuscarPedidoUseCase;
+use App\UseCases\Pedido\BuscarPedido\IBuscarPedidoUseCase;
 use App\UseCases\Pedido\CriarPedido\CriarPedidoUseCase;
 use App\UseCases\Pedido\CriarPedido\ICriarPedidoUseCase;
 use App\UseCases\Pedido\DeletarPedido\DeletarPedidoUseCase;
@@ -144,6 +146,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             IListarPedidosUseCase::class,
             ListarPedidosUseCase::class
+        );
+        $this->app->bind(
+            IBuscarPedidoUseCase::class,
+            BuscarPedidoUseCase::class
         );
         $this->app->bind(
             ICriarPedidoUseCase::class,
