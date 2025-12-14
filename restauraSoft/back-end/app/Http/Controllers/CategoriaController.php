@@ -74,6 +74,75 @@ class CategoriaController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *      path="/categoria/{id}",
+     *      summary="Busca uma categoria específica pelo ID",
+     *      tags={"Categoria"},
+     *      security={{"bearerAuth": {}}},
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          description="ID da categoria a ser buscada",
+     *          @OA\Schema(type="integer", example=1)
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Categoria retornada com sucesso",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="success"),
+     *              @OA\Property(property="message", type="string", example="Categoria retornada com sucesso"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="object",
+     *                  @OA\Property(property="id", type="integer", example=1),
+     *                  @OA\Property(property="nome", type="string", example="Entradas"),
+     *                  @OA\Property(property="descricao", type="string", example="Pratos para iniciar a refeição"),
+     *                  @OA\Property(property="ordem", type="integer", example=1),
+     *                  @OA\Property(property="ativo", type="boolean", example=true)
+     *              )
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Requisição inválida",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="ID inválido ou não fornecido")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Categoria não encontrada",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Categoria não encontrada.")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Não autenticado",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Token de autenticação inválido")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Erro interno do servidor",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="status", type="string", example="error"),
+     *              @OA\Property(property="message", type="string", example="Erro ao buscar categoria")
+     *          )
+     *      )
+     * )
+     */
     public function buscar(IBuscarCategoriaUseCase $useCase, $id)
     {
         $resposta = $useCase->execute($id);
