@@ -36,15 +36,7 @@ class CriarPratosUseCase implements ICriarPratosUseCase
             return [
                 'status' => 'success',
                 'message' => 'Prato salvo com sucesso',
-                'data' => [
-                    'id' => $prato->id,
-                    'nome' => $prato->nome,
-                    'descricao' => $prato->descricao,
-                    'preco' => $prato->preco,
-                    'imagem' => $prato->imagem,
-                    'categoria_id' => $prato->categoria_id,
-                    'ativo' => $prato->ativo,
-                ],
+                'data' => $prato->toDto(),
                 'http' => 201
             ];
         } catch (Exception $e) {

@@ -49,14 +49,7 @@ class EditarPratosUseCase implements IEditarPratosUseCase
             return [
                 'status' => 'success',
                 'message' => 'Prato editado com sucesso',
-                'data' => [
-                    'id' => $prato->id,
-                    'nome' => $prato->nome,
-                    'descricao' => $prato->descricao,
-                    'preco' => $prato->preco,
-                    'categoria_id' => $prato->categoria_id,
-                    'ativo' => $prato->ativo,
-                ],
+                'data' => $prato->toDto(),
                 'http' => 200
             ];
 

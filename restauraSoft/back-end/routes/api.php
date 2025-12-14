@@ -26,9 +26,10 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::group([
     'middleware' => 'jwt.auth',
-   'prefix' => 'prato'
+    'prefix' => 'prato'
 ], function () {
     Route::get('/', 'App\Http\Controllers\PratoController@listagem');
+    Route::get('/{id}', 'App\Http\Controllers\PratoController@buscar');
     Route::post('/', 'App\Http\Controllers\PratoController@cadastrar');
     Route::put('/{id}', 'App\Http\Controllers\PratoController@editar');
     Route::delete('/{id}', 'App\Http\Controllers\PratoController@deletar');
@@ -39,6 +40,7 @@ Route::group([
     'prefix' => 'categoria'
 ], function () {
     Route::get('/', 'App\Http\Controllers\CategoriaController@listagem');
+    Route::get('/{id}', 'App\Http\Controllers\CategoriaController@buscar');
     Route::post('/', 'App\Http\Controllers\CategoriaController@cadastrar');
     Route::put('/{id}', 'App\Http\Controllers\CategoriaController@editar');
     Route::delete('/{id}', 'App\Http\Controllers\CategoriaController@deletar');
@@ -49,6 +51,7 @@ Route::group([
     'prefix' => 'mesa'
 ], function () {
     Route::get('/', 'App\Http\Controllers\MesaController@listagem');
+    Route::get('/{id}', 'App\Http\Controllers\MesaController@buscar');
     Route::post('/', 'App\Http\Controllers\MesaController@cadastrar');
     Route::put('/{id}', 'App\Http\Controllers\MesaController@editar');
     Route::delete('/{id}', 'App\Http\Controllers\MesaController@deletar');
@@ -59,6 +62,7 @@ Route::group([
     'prefix' => 'pedido'
 ], function () {
     Route::get('/', 'App\Http\Controllers\PedidoController@listagem');
+    Route::get('/{id}', 'App\Http\Controllers\PedidoController@buscar');
     Route::post('/', 'App\Http\Controllers\PedidoController@cadastrar');
     Route::put('/{id}', 'App\Http\Controllers\PedidoController@editar');
     Route::delete('/{id}', 'App\Http\Controllers\PedidoController@deletar');
@@ -69,6 +73,7 @@ Route::group([
     'prefix' => 'pedido'
 ], function () {
     Route::get('/{pedidoId}/itens', 'App\Http\Controllers\PedidoItemController@listagem');
+    Route::get('/{pedidoId}/itens/{id}', 'App\Http\Controllers\PedidoItemController@buscar');
     Route::post('/{pedidoId}/itens', 'App\Http\Controllers\PedidoItemController@cadastrar');
     Route::put('/{pedidoId}/itens/{id}', 'App\Http\Controllers\PedidoItemController@editar');
     Route::delete('/{pedidoId}/itens/{id}', 'App\Http\Controllers\PedidoItemController@deletar');

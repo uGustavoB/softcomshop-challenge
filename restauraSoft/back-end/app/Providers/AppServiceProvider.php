@@ -38,6 +38,8 @@ use App\UseCases\Pedido\EditarPedido\EditarPedidoUseCase;
 use App\UseCases\Pedido\EditarPedido\IEditarPedidoUseCase;
 use App\UseCases\Pedido\ListarPedidos\IListarPedidosUseCase;
 use App\UseCases\Pedido\ListarPedidos\ListarPedidosUseCase;
+use App\UseCases\Pratos\BuscarPrato\BuscarPratoUseCase;
+use App\UseCases\Pratos\BuscarPrato\IBuscarPratoUseCase;
 use App\UseCases\Pratos\CriarPratos\CriarPratosUseCase;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\DeletarPrato\DeletarPratoUseCase;
@@ -64,6 +66,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ICriarPratosUseCase::class,
             CriarPratosUseCase::class
+        );
+        $this->app->bind(
+            IBuscarPratoUseCase::class,
+            BuscarPratoUseCase::class
         );
         $this->app->bind(
             IListarPratosUseCase::class,

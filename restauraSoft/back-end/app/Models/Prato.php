@@ -25,6 +25,19 @@ class Prato extends Model
         'disponivel' => 'boolean',
     ];
 
+    public function toDto()
+    {
+        return [
+            'id' => $this->id,
+            'nome' => $this->nome,
+            'descricao' => $this->descricao,
+            'preco' => $this->preco,
+            'imagem' => $this->imagem,
+            'categoria_id' => $this->categoria_id,
+            'ativo' => $this->ativo,
+        ];
+    }
+
     public function categoria()
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');

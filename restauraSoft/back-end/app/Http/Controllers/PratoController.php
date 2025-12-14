@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PratoRequest;
 use App\Repositories\PratoRepository;
+use App\UseCases\Pratos\BuscarPrato\IBuscarPratoUseCase;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\DeletarPrato\IDeletarPratoUseCase;
 use App\UseCases\Pratos\EditarPratos\IEditarPratosUseCase;
@@ -75,6 +76,18 @@ class PratoController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Pratos retornados com sucesso',
+            'data' => $resposta
+        ]);
+    }
+
+//  Gustavo - Fazer documentação
+    public function buscar(IBuscarPratoUseCase $useCase, $id)
+    {
+        $resposta = $useCase->execute($id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Prato retornado com sucesso',
             'data' => $resposta
         ]);
     }

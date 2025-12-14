@@ -1,11 +1,11 @@
 <?php
 
-namespace App\UseCases\Pratos\ListarPratos;
+namespace App\UseCases\Pratos\BuscarPrato;
 
 use App\Repositories\PratoRepository;
 use Illuminate\Support\Facades\Log;
 
-class ListarPratosUseCase implements IListarPratosUseCase
+class BuscarPratoUseCase implements IBuscarPratoUseCase
 {
     private $repository;
 
@@ -15,16 +15,18 @@ class ListarPratosUseCase implements IListarPratosUseCase
         $this->repository = $repository;
     }
 
-    public function execute()
+    public function execute($id)
     {
         try {
-            $pratos = $this->repository->listagem();
+            $prato = $this->repository->buscarPorId($id);
 
-            return $pratos->map(function($prato) {
-                return $prato->toDto();
-            });
-        }catch (\Exception $e){
-            Log::error("Erro ao listar pratos: " . $e->getMessage());
+            if (!$prato) {
+                throw new \Exception("Prato não encontrado.", 404);
+            }
+
+            return $prato->toDto();
+        } catch (\Exception $e) {
+            Log::error("Erro ao buscar prato: " . $e->getMessage());
 
             return [
                 'status' => 'error',
