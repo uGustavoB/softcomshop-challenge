@@ -19,35 +19,22 @@ class DeletarMesaUseCase implements IDeletarMesaUseCase
     {
         try {
             if (empty($id) && $id !== 0) {
-                return [
-                    'status' => 'error',
-                    'message' => 'ID da mesa não fornecido.',
-                    'data' => null,
-                    'http' => 400
-                ];
+                throw new \Exception('ID da mesa não fornecido.', 400);
             }
 
             if ($id == 0) {
-                return [
-                    'status' => 'error',
-                    'message' => 'ID inválido.',
-                    'data' => null,
-                    'http' => 400
-                ];
+                throw new \Exception("ID inválido para deleção.", 400);
             }
 
-            $pratoExistente = $this->repository->buscarPorId($id);
+            $mesaExistente = $this->repository->buscarPorId($id);
 
-            if (!$pratoExistente) {
-                return [
-                    'status' => 'error',
-                    'message' => 'Mesa não encontrada.',
-                    'data' => null,
-                    'http' => 404
-                ];
+            if (!$mesaExistente) {
+                throw new \Exception("Mesa não encontrada.", 404);
             }
 
-            $this->repository->deletar($id);
+            if ($mesaExistente->pedidos()->exists()) {
+                throw new \Exception("Não é possível deletar a mesa pois existem pedidos associados a ela.", 409);
+            }
 
             return [
                 'status' => 'success',
