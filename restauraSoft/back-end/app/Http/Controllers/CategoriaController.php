@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoriaRequest;
 use App\Repositories\CategoriaRepository;
+use App\UseCases\Categoria\BuscarCategoria\IBuscarCategoriaUseCase;
 use App\UseCases\Categoria\CriarCategorias\ICriarCategoriasUseCase;
 use App\UseCases\Categoria\DeletarCategoria\IDeletarCategoriaUseCase;
 use App\UseCases\Categoria\EditarCategoria\IEditarCategoriaUseCase;
@@ -65,6 +66,17 @@ class CategoriaController extends Controller
     public function listagem(IListarCategoriasUseCase  $useCase)
     {
         $resposta = $useCase->execute();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Categorias retornadas com sucesso',
+            'data' => $resposta
+        ]);
+    }
+
+    public function buscar(IBuscarCategoriaUseCase $useCase, $id)
+    {
+        $resposta = $useCase->execute($id);
 
         return response()->json([
             'status' => 'success',

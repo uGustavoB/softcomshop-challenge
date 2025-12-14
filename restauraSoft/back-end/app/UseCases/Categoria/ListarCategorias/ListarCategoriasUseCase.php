@@ -19,13 +19,7 @@ class ListarCategoriasUseCase implements IListarCategoriasUseCase
         $categorias = $this->repository->listagem();
 
         return $categorias->map(function($categoria) {
-            return [
-                'id' => $categoria->id,
-                'nome' => $categoria->nome,
-                'descricao' => $categoria->descricao,
-                'ordem' => $categoria->ordem,
-                'ativo' => $categoria->ativo,
-            ];
+            return $categoria->toDto();
         });
     }
 }

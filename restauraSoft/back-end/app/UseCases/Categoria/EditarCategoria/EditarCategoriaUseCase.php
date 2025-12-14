@@ -44,13 +44,7 @@ class EditarCategoriaUseCase implements IEditarCategoriaUseCase
             return [
                 'status' => 'success',
                 'message' => 'Categoria editada com sucesso',
-                'data' => [
-                    'id' => $categoria->id,
-                    'nome' => $categoria->nome,
-                    'descricao' => $categoria->descricao,
-                    'ordem' => $categoria->ordem,
-                    'ativo' => $categoria->ativo,
-                ],
+                'data' => $categoria->toDto(),
                 'http' => 200
             ];
         } catch (\Exception $e) {

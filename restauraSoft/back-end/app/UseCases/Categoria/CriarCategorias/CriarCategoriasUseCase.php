@@ -28,13 +28,7 @@ class CriarCategoriasUseCase implements ICriarCategoriasUseCase
             return [
                 'status' => 'success',
                 'message' => 'Categoria criada com sucesso',
-                'data' => [
-                    'id' => $categoria->id,
-                    'nome' => $categoria->nome,
-                    'descricao' => $categoria->descricao,
-                    'ordem' => $categoria->ordem,
-                    'ativo' => $categoria->ativo,
-                ],
+                'data' => $categoria->toDto(),
                 'http' => 201
             ];
 

@@ -25,6 +25,16 @@ class Categoria extends Model
         'ativo' => 'boolean',
     ];
 
+    public function toDto(): array {
+        return [
+            'id' => $this->id,
+            'nome' => $this->nome,
+            'descricao' => $this->descricao,
+            'ordem' => $this->ordem,
+            'ativo' => $this->ativo
+        ];
+    }
+
     /**
      * Relacionamento com pratos
      */
