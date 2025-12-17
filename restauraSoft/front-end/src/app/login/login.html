@@ -1,0 +1,85 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br
+            from-neutral-950 via-neutral-900 to-neutral-950 p-4">
+
+  <div class="w-full max-w-md rounded-xl border border-neutral-800
+              bg-neutral-900/50 backdrop-blur-sm shadow-lg">
+
+    <!-- Header -->
+    <div class="p-6 text-center space-y-3">
+      <div class="flex justify-center">
+        <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600
+                    flex items-center justify-center">
+          <mat-icon class="text-white text-4xl">restaurant</mat-icon>
+        </div>
+      </div>
+
+      <h1 class="text-3xl font-bold text-white">RestauraSoft</h1>
+      <p class="text-neutral-400 text-sm">
+        Sistema de gerenciamento de pedidos e mesas
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div class="p-6 pt-0">
+      <form (ngSubmit)="onSubmit()" class="space-y-4">
+
+        <!-- Email -->
+        <div class="space-y-2">
+          <label class="text-neutral-300 text-sm">Email</label>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            required
+            [disabled]="isLoading"
+            placeholder="seu@email.com"
+            class="w-full h-10 rounded-md bg-neutral-800 border border-neutral-700
+                   text-white placeholder:text-neutral-500 px-3"
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="space-y-2">
+          <label class="text-neutral-300 text-sm">Senha</label>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            [disabled]="isLoading"
+            placeholder="••••••••"
+            class="w-full h-10 rounded-md bg-neutral-800 border border-neutral-700
+                   text-white placeholder:text-neutral-500 px-3"
+          />
+        </div>
+
+        <!-- Error -->
+        <div *ngIf="error"
+             class="text-sm text-red-400 bg-red-950/50 border border-red-900
+                    rounded-lg p-3">
+          {{ error }}
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          [disabled]="isLoading"
+          class="w-full h-10 rounded-md text-white font-medium
+                 bg-gradient-to-r from-amber-500 to-orange-600
+                 hover:from-amber-600 hover:to-orange-700
+                 disabled:opacity-60 flex items-center justify-center">
+
+          <ng-container *ngIf="isLoading; else loginText">
+            <mat-icon class="mr-2 animate-spin">autorenew</mat-icon>
+            Entrando...
+          </ng-container>
+
+          <ng-template #loginText>
+            Entrar
+          </ng-template>
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>

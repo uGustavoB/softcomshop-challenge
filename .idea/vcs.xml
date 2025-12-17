@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/restauraSoft/front-end" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/restauraSoft/ngm-dev-blocks-demo-app" vcs="Git" />
   </component>
 </project>
