@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { LoginService } from '../services/login/login.service';
+import { LoginService } from '../../services/login/login.service';
 
 @Component({
   selector: 'app-login',
@@ -25,17 +25,21 @@ export class Login {
     private router: Router
   ) {}
 
-  async onSubmit() {
+  onSubmit() {
     this.error = '';
     this.isLoading = true;
 
-    try {
-      await this.auth.login(this.email, this.password);
-      this.router.navigate(['/dashboard']);
-    } catch (err: any) {
-      this.error = err?.message || 'Email ou senha incorretos';
-    } finally {
-      this.isLoading = false;
-    }
+    this.auth.login(this.email, this.password).subscribe({
+      next: () => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: err => {
+        this.error = err?.message || 'Email ou senha incorretos';
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 }

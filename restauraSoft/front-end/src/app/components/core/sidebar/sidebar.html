@@ -1,0 +1,84 @@
+<div class="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950">
+  <!-- Mobile Header -->
+  <div class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-neutral-900/80 backdrop-blur-md border-b border-neutral-800 z-50 flex items-center justify-between px-4">
+    <div class="flex items-center gap-2">
+      <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+        <mat-icon fontSet="material-symbols-rounded" class="h-5 w-5 text-white">restaurant</mat-icon>
+      </div>
+      <span class="font-bold text-white">RestauraSoft</span>
+    </div>
+    <button
+      (click)="toggleSidebar()"
+      class="p-2 text-white hover:bg-neutral-800 rounded-lg transition-colors"
+    >
+      <mat-icon fontSet="material-symbols-rounded" *ngIf="!isSidebarOpen">menu</mat-icon>
+      <mat-icon fontSet="material-symbols-rounded" *ngIf="isSidebarOpen">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Sidebar -->
+  <aside
+    [class]="'fixed top-0 left-0 h-full w-64 bg-neutral-900/80 backdrop-blur-md border-r border-neutral-800 z-40 transition-transform duration-300 ' +
+              (isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0')">
+    <div class="flex flex-col h-full">
+      <!-- Logo -->
+      <div class="h-16 flex items-center gap-3 px-6 border-b border-neutral-800">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+          <mat-icon fontSet="material-symbols-rounded" class="h-6 w-6 text-white">restaurant</mat-icon>
+        </div>
+        <div>
+          <h1 class="font-bold text-white">RestauraSoft</h1>
+          <p class="text-xs text-neutral-400">Gerenciamento</p>
+        </div>
+      </div>
+
+      <!-- Menu Navigation -->
+      <nav class="flex-1 p-4 space-y-1">
+        <button
+          *ngFor="let item of menuItems"
+          (click)="navigateTo(item.href)"
+          [class]="'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left ' +
+                  (isActive(item.href) ?
+                   'bg-gradient-to-r from-amber-500/20 to-orange-600/20 text-amber-400 border border-amber-500/30' :
+                   'text-neutral-400 hover:bg-neutral-800 hover:text-white')">
+          <mat-icon fontSet="material-symbols-rounded">{{ item.icon }}</mat-icon>
+          <span class="font-medium">{{ item.label }}</span>
+        </button>
+      </nav>
+
+      <!-- User Info & Logout -->
+      <div class="p-4 border-t border-neutral-800">
+        <div class="flex items-center gap-3 mb-3 px-2">
+          <div class="h-9 w-9 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
+            {{ getUserInitial() }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-white text-sm truncate">{{ loginService.currentUser?.name || 'Usuário' }}</p>
+            <p class="text-xs text-neutral-400 truncate">{{ loginService.currentUser?.email || '' }}</p>
+          </div>
+        </div>
+        <button
+          (click)="logout()"
+          class="w-full border border-neutral-700 text-neutral-300 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/50 bg-transparent py-2 px-4 rounded-lg flex items-center justify-center transition-colors">
+          <mat-icon fontSet="material-symbols-rounded" class="mr-2 h-4 w-4">logout</mat-icon>
+          Sair
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Overlay for mobile -->
+  <div
+    *ngIf="isSidebarOpen"
+    class="lg:hidden fixed inset-0 bg-black/50 z-30"
+    (click)="closeSidebar()">
+  </div>
+
+  <!-- Main Content Area (onde os child components serão carregados) -->
+  <main class="lg:ml-64 pt-16 lg:pt-0 min-h-screen">
+    <div class="p-6 lg:p-8">
+      <!-- Router outlet para os componentes filhos -->
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
