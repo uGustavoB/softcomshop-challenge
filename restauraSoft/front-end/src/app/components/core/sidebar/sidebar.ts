@@ -29,7 +29,7 @@ export class Sidebar {
     { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     { href: '/pedidos', label: 'Pedidos', icon: 'shopping_bag' },
     { href: '/mesas', label: 'Mesas', icon: 'table_restaurant' },
-    { href: '/pratos', label: 'Cardápio', icon: 'restaurant' },
+    { href: '/pratos', label: 'Pratos', icon: 'restaurant' },
     { href: '/categorias', label: 'Categorias', icon: 'category' },
   ];
 

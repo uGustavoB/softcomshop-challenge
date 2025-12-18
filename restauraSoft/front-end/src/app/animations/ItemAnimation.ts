@@ -1,7 +1,7 @@
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 export const itemAnimation = trigger('itemAnimation', [
-  transition('* => *', [
+  transition(':enter', [
     query(':enter', [
       style({ opacity: 0, transform: 'translateY(20px)' }),
       stagger(100, [
@@ -9,4 +9,4 @@ export const itemAnimation = trigger('itemAnimation', [
       ])
     ], { optional: true })
   ])
-])
+]);

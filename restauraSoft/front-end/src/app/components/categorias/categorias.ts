@@ -8,6 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {fadeSlide} from '../../animations/FadeSlide';
+import {itemAnimation} from '../../animations/ItemAnimation';
 
 @Component({
   selector: 'app-categorias',
@@ -18,7 +19,7 @@ import {fadeSlide} from '../../animations/FadeSlide';
   ],
   templateUrl: './categorias.html',
   styleUrl: './categorias.css',
-  animations: [fadeSlide]
+  animations: [fadeSlide, itemAnimation]
 })
 export class Categorias implements OnInit{
   categorias: Categoria[] = [];
