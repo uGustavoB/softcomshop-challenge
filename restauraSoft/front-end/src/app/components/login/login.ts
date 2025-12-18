@@ -31,7 +31,7 @@ export class Login {
 
     this.auth.login(this.email, this.password).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/categorias']);
       },
       error: err => {
         this.error = err?.message || 'Email ou senha incorretos';

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import {Login} from './components/login/login';
 import {Sidebar} from './components/core/sidebar/sidebar';
+import {Categorias} from './components/categorias/categorias';
 
 export const routes: Routes = [
   {
@@ -8,13 +9,13 @@ export const routes: Routes = [
     component: Login
   },
   {
-    path: "sidebar",
+    path: "",
     component: Sidebar,
-    // children: [
-    //   {
-    //     path: "path",
-    //     component: ComponentName
-    //   }
-    // ]
+    children: [
+      {
+        path: "categorias",
+        component: Categorias
+      }
+    ]
   }
 ];
