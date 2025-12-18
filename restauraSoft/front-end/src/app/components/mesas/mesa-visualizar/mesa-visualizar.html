@@ -1,0 +1,293 @@
+<div (click)="closeModal()" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div (click)="$event.stopPropagation()" class="bg-neutral-900 border border-neutral-800 rounded-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto text-white">
+    <!-- Header -->
+    <div class="p-6 border-b border-neutral-800 sticky top-0 bg-neutral-900 z-10">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+            <span class="text-xl font-bold text-white">{{ mesa?.numero }}</span>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold">Mesa {{ mesa?.numero }}</h2>
+            <p class="text-neutral-400 text-sm">
+              Capacidade: {{ mesa?.capacidade }} pessoas •
+              {{ mesa?.localizacao || 'Sem localização' }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="handleEditMesa()"
+            class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-3 py-1.5 rounded-lg flex items-center text-sm transition-colors"
+          >
+            <mat-icon fontSet="material-symbols-rounded" class="mr-1">edit</mat-icon>
+            Editar Mesa
+          </button>
+          <button
+            (click)="closeModal()"
+            class="text-neutral-400 hover:text-white"
+          >
+            <mat-icon fontSet="material-symbols-rounded">close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="p-6 space-y-6">
+      <!-- Seção de pedidos existentes -->
+      <div *ngIf="!showNewOrder">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold flex items-center gap-2">
+            <mat-icon fontSet="material-symbols-rounded" class="text-amber-500">receipt</mat-icon>
+            Pedidos desta Mesa
+          </h3>
+          <button
+            (click)="showNewOrder = true"
+            class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+          >
+            <mat-icon fontSet="material-symbols-rounded" class="mr-2">add</mat-icon>
+            Novo Pedido
+          </button>
+        </div>
+
+        <!-- Lista de pedidos -->
+        <div class="space-y-3">
+          <div *ngIf="pedidos.length === 0" class="border border-neutral-800 bg-neutral-800/30 rounded-lg p-8 text-center">
+            <mat-icon fontSet="material-symbols-rounded" class="text-neutral-600 text-5xl mb-3">
+              shopping_cart
+            </mat-icon>
+            <p class="text-neutral-500">Nenhum pedido nesta mesa</p>
+            <p class="text-sm text-neutral-600 mt-1">Clique em "Novo Pedido" para começar</p>
+          </div>
+
+          <div *ngFor="let pedido of pedidos" class="border border-neutral-800 bg-neutral-800/50 rounded-lg p-4 hover:bg-neutral-800/70 transition-colors">
+            <div class="flex items-start justify-between">
+              <div class="space-y-2 flex-1">
+                <div class="flex items-center gap-3">
+                  <span class="text-white font-medium">Pedido #{{ pedido.id }}</span>
+                  <span
+                    [class]="'px-2 py-1 rounded text-xs font-medium ' + getStatusInfo(pedido.status).bgColor + ' ' + getStatusInfo(pedido.status).color"
+                  >
+                    {{ getStatusInfo(pedido.status).label }}
+                  </span>
+                </div>
+                <div class="flex gap-4 text-sm text-neutral-400">
+                  <span>Tipo: {{ pedido.tipo_pedido }}</span>
+                  <span>Pagamento: {{ pedido.forma_pagamento }}</span>
+                </div>
+                <p *ngIf="pedido.observacoes" class="text-sm text-neutral-500">{{ pedido.observacoes }}</p>
+
+                <!-- Itens do pedido -->
+                <div *ngFor="let item of pedidoItems[pedido.id]" class="text-sm text-neutral-300">
+                  {{ item.quantidade }}x
+                  <span *ngIf="getNomePrato(item.prato_id) | async as nomePrato">
+                    {{ nomePrato }}
+                  </span>
+                  - R$ {{ formatNumber(item.preco_unitario) }}
+                </div>
+              </div>
+
+              <div class="text-right">
+                <div class="text-2xl font-bold text-amber-500">
+                  R$ {{ getValorTotalPedido(pedido) }}
+                </div>
+                <div class="text-xs text-neutral-500 mt-1">
+                  {{ pedido.data_pedido | date:'dd/MM/yyyy HH:mm' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulário de novo pedido -->
+      <div *ngIf="showNewOrder">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold flex items-center gap-2">
+            <mat-icon fontSet="material-symbols-rounded" class="text-amber-500">shopping_cart</mat-icon>
+            Criar Novo Pedido
+          </h3>
+          <button
+            (click)="cancelarNovoPedido()"
+            class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-3 py-1.5 rounded-lg flex items-center text-sm transition-colors"
+          >
+            <mat-icon fontSet="material-symbols-rounded" class="mr-1">close</mat-icon>
+            Cancelar
+          </button>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-3">
+          <!-- Formulário (2/3) -->
+          <div class="lg:col-span-2 space-y-4">
+            <!-- Informações básicas -->
+            <div class="border border-neutral-800 bg-neutral-800/50 rounded-lg p-4 space-y-4">
+              <div class="grid gap-4 md:grid-cols-2">
+                <!-- Tipo do Pedido -->
+                <div class="space-y-2">
+                  <label class="text-neutral-300 text-sm font-medium">Tipo do Pedido</label>
+                  <select
+                    [(ngModel)]="tipoPedido"
+                    class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  >
+                    <option value="local">Local</option>
+                    <option value="delivery">Delivery</option>
+                    <option value="retirada">Retirada</option>
+                  </select>
+                </div>
+
+                <!-- Forma de Pagamento -->
+                <div class="space-y-2">
+                  <label class="text-neutral-300 text-sm font-medium">Forma de Pagamento</label>
+                  <select
+                    [(ngModel)]="formaPagamento"
+                    class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  >
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="cartao_credito">Cartão de Crédito</option>
+                    <option value="cartao_debito">Cartão de Débito</option>
+                    <option value="pix">PIX</option>
+                    <option value="outros">Outros</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Observações -->
+              <div class="space-y-2">
+                <label class="text-neutral-300 text-sm font-medium">Observações</label>
+                <textarea
+                  [(ngModel)]="observacoes"
+                  class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+                  rows="2"
+                  placeholder="Observações do pedido..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Itens do Pedido -->
+            <div class="border border-neutral-800 bg-neutral-800/50 rounded-lg p-4 space-y-4">
+              <div class="flex items-center justify-between">
+                <label class="text-white font-semibold">Itens do Pedido</label>
+                <button
+                  type="button"
+                  (click)="adicionarItem()"
+                  class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg flex items-center text-sm"
+                >
+                  <mat-icon fontSet="material-symbols-rounded" class="mr-1">add</mat-icon>
+                  Adicionar Item
+                </button>
+              </div>
+
+              <div class="space-y-3">
+                <div *ngIf="itens.length === 0" class="text-center text-neutral-500 py-6 text-sm">
+                  Nenhum item adicionado. Clique em "Adicionar Item" para começar.
+                </div>
+
+                <div *ngFor="let item of itens; let i = index" class="flex gap-3 items-end p-3 rounded-lg bg-neutral-900/50 border border-neutral-700">
+                  <!-- Prato -->
+                  <div class="flex-1 space-y-2">
+                    <label class="text-neutral-300 text-xs">Prato</label>
+                    <input
+                      type="number"
+                      [(ngModel)]="item.pratoId"
+                      (ngModelChange)="atualizarItem(i, 'pratoId', $event)"
+                      class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 text-sm"
+                      placeholder="ID do prato"
+                    />
+                  </div>
+
+                  <!-- Quantidade -->
+                  <div class="w-20 space-y-2">
+                    <label class="text-neutral-300 text-xs">Qtd</label>
+                    <input
+                      type="number"
+                      [(ngModel)]="item.quantidade"
+                      (ngModelChange)="atualizarItem(i, 'quantidade', $event)"
+                      min="1"
+                      class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+
+                  <!-- Preço -->
+                  <div class="w-28 space-y-2">
+                    <label class="text-neutral-300 text-xs">Preço Unit.</label>
+                    <input
+                      type="number"
+                      [(ngModel)]="item.preco"
+                      (ngModelChange)="atualizarItem(i, 'preco', $event)"
+                      step="0.01"
+                      min="0"
+                      class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 text-sm"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <!-- Remover -->
+                  <button
+                    type="button"
+                    (click)="removerItem(i)"
+                    class="border border-red-900 text-red-400 hover:bg-red-950 bg-transparent p-2 rounded-lg"
+                  >
+                    <mat-icon fontSet="material-symbols-rounded" class="text-sm">delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resumo (1/3) -->
+          <div class="space-y-4">
+            <div class="border border-amber-900/50 bg-gradient-to-br from-amber-500/10 to-orange-500/10 backdrop-blur-sm rounded-lg p-4 sticky top-4">
+              <h4 class="text-white font-semibold text-lg mb-4">Resumo do Pedido</h4>
+
+              <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-neutral-900/50 rounded-lg">
+                  <span class="text-neutral-400 text-sm">Total de Itens</span>
+                  <span class="text-white font-semibold text-lg">{{ itens.length }}</span>
+                </div>
+
+                <div class="flex justify-between items-center p-3 bg-neutral-900/50 rounded-lg">
+                  <span class="text-neutral-400 text-sm">Quantidade Total</span>
+                  <span class="text-white font-semibold text-lg">
+                    {{ getTotalQuantidade() }}
+                  </span>
+                </div>
+
+                <div class="flex justify-between items-center p-4 bg-gradient-to-r from-amber-600/20 to-orange-600/20 rounded-lg border border-amber-500/30">
+                  <span class="text-amber-300 font-medium">Valor Total</span>
+                  <span class="text-amber-400 font-bold text-2xl">R$ {{ getValorTotal() }}</span>
+                </div>
+              </div>
+
+              <div class="pt-4 space-y-2">
+                <button
+                  (click)="criarNovoPedido()"
+                  [disabled]="isLoading || itens.length === 0"
+                  class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span *ngIf="isLoading">
+                    <mat-icon fontSet="material-symbols-rounded" class="animate-spin">refresh</mat-icon>
+                  </span>
+                  <span *ngIf="!isLoading">Criar Pedido</span>
+                </button>
+                <button
+                  (click)="cancelarNovoPedido()"
+                  class="w-full border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent py-2.5 rounded-lg transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de edição da mesa -->
+<app-mesa-salvar
+  *ngIf="isEditModalOpen"
+  [mesa]="mesa"
+  (close)="handleCloseEditModal()"
+></app-mesa-salvar>

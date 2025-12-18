@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {Mesa, MesasService} from '../../services/mesas/mesas.service';
 import {ToastrService} from 'ngx-toastr';
 import {MesaSalvar} from './mesa-salvar/mesa-salvar';
+import {MesaVisualizar} from './mesa-visualizar/mesa-visualizar';
 
 interface StatusConfig {
   label: string;
@@ -19,21 +20,22 @@ interface StatusConfig {
     CommonModule,
     FormsModule,
     MatIconModule,
-    MesaSalvar
+    MesaSalvar,
+    MesaVisualizar
   ],
   standalone: true,
   templateUrl: './mesas.html',
   styleUrl: './mesas.css',
 })
-export class Mesas {
+export class Mesas implements OnInit{
   mesas: Mesa[] = [];
   isLoading = false;
 
-  // Estados do modal
+  // Estados dos modais
   selectedMesa: Mesa | null = null;
-  isModalOpen = false;
+  isModalEditOpen = false;
+  isModalViewOpen = false;
 
-  // Configuração de status (ajustada para os status do seu service)
   statusConfig: Record<string, StatusConfig> = {
     livre: {
       label: 'Disponível',
@@ -85,20 +87,31 @@ export class Mesas {
     });
   }
 
+  // Abre modal de visualização (quando clica na mesa)
   handleMesaClick(mesa: Mesa): void {
     this.selectedMesa = mesa;
-    this.isModalOpen = true;
+    this.isModalViewOpen = true;
+  }
+
+  handleEditMesa(mesa: Mesa): void {
+    this.selectedMesa = mesa;
+    this.isModalEditOpen = true;
   }
 
   handleNovaMesa(): void {
     this.selectedMesa = null;
-    this.isModalOpen = true;
+    this.isModalEditOpen = true;
   }
 
-  handleCloseModal(): void {
-    this.isModalOpen = false;
+  handleCloseEditModal(): void {
+    this.isModalEditOpen = false;
     this.selectedMesa = null;
-    this.loadMesas(); // Refresh tables data
+    this.loadMesas();
+  }
+
+  handleCloseViewModal(): void {
+    this.isModalViewOpen = false;
+    this.selectedMesa = null;
   }
 
   getStatusInfo(status: string): StatusConfig {
