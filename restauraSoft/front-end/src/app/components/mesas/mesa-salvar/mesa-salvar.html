@@ -1,0 +1,120 @@
+<div (click)="closeModal()" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div (click)="$event.stopPropagation()" class="bg-neutral-900 border border-neutral-800 rounded-lg w-full max-w-md text-white">
+    <!-- Header -->
+    <div class="p-6 border-b border-neutral-800">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold">
+          {{ isEditMode ? 'Editar Mesa' : 'Nova Mesa' }}
+        </h2>
+        <button
+          (click)="closeModal()"
+          class="text-neutral-400 hover:text-white"
+        >
+          <mat-icon fontSet="material-symbols-rounded">close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="p-6 space-y-4">
+      <!-- Número da Mesa -->
+      <div class="space-y-2">
+        <label class="text-neutral-300 block text-sm font-medium">
+          Número da Mesa *
+        </label>
+        <input
+          type="text"
+          [(ngModel)]="numero"
+          [disabled]="isLoading"
+          class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          min="1"
+        />
+      </div>
+
+      <!-- Capacidade -->
+      <div class="space-y-2">
+        <label class="text-neutral-300 block text-sm font-medium">
+          Capacidade (pessoas) *
+        </label>
+        <input
+          type="number"
+          [(ngModel)]="capacidade"
+          [disabled]="isLoading"
+          class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          min="1"
+          max="20"
+        />
+      </div>
+
+      <!-- Status e Localização -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Status -->
+        <div class="space-y-2">
+          <label class="text-neutral-300 block text-sm font-medium">
+            Status
+          </label>
+          <select
+            [(ngModel)]="status"
+            [disabled]="isLoading"
+            class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          >
+            <option *ngFor="let option of statusOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!--Localização -->
+        <div class="space-y-2">
+          <label class="text-neutral-300 block text-sm font-medium">
+            Localização
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="localizacao"
+            [disabled]="isLoading"
+            class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            placeholder="Ex: Área externa, salão principal"
+          />
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-6 border-t border-neutral-800 flex justify-between ">
+      <!-- Botão de exclusão (apenas no modo edição) -->
+      <div *ngIf="isEditMode" class="flex justify-center">
+        <button
+          (click)="handleDelete()"
+          [disabled]="isLoading"
+          class="flex items-center border border-red-900 text-red-400 hover:bg-red-950 bg-transparent px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <mat-icon fontSet="material-symbols-rounded" class="mr-2">delete</mat-icon>
+          Excluir
+        </button>
+      </div>
+
+      <!-- Botões de ação -->
+      <div class="flex gap-3 ml-auto">
+        <button
+          (click)="closeModal()"
+          [disabled]="isLoading"
+          class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="handleSave()"
+          [disabled]="isLoading || !numero || !capacidade || capacidade <= 0"
+          class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span *ngIf="isLoading">
+            <mat-icon fontSet="material-symbols-rounded" class="animate-spin">refresh</mat-icon>
+          </span>
+          <span *ngIf="!isLoading">
+            {{ isEditMode ? 'Salvar' : 'Criar' }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

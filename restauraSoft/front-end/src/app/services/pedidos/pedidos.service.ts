@@ -43,15 +43,6 @@ export interface PedidoItemRequest {
   status_item?: string;
 }
 
-export interface Mesa {
-  id: number;
-  numero: number;
-  capacidade: number;
-  descricao?: string;
-  status: 'livre' | 'ocupada' | 'reservada' | 'manutencao';
-  ativo: number;
-}
-
 @Injectable({
   providedIn: 'root',
 })
