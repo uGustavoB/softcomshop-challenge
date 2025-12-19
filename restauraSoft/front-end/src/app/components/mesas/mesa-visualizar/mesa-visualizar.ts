@@ -1,14 +1,17 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MesaSalvar} from '../mesa-salvar/mesa-salvar';
 import {Mesa} from '../../../services/mesas/mesas.service';
 import {Pedido, PedidoItem, PedidosService} from '../../../services/pedidos/pedidos.service';
 import {ToastrService} from 'ngx-toastr';
 import {PratosService} from '../../../services/pratos/pratos.service';
-import {Observable, of} from 'rxjs';
+import {Observable, of, startWith} from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 interface StatusConfig{
   label: string;
@@ -22,6 +25,10 @@ interface StatusConfig{
     CommonModule,
     FormsModule,
     MatIconModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
     MesaSalvar
   ],
   templateUrl: './mesa-visualizar.html',
@@ -42,6 +49,11 @@ export class MesaVisualizar implements OnInit{
   pedidoItems: { [pedidoId: number]: PedidoItem[] } = {};
   private pratosCache = new Map<number, string>();
 
+  pratos: any[] = [];
+  pratosFiltrados: Observable<any[]> = new Observable();
+  pratosFiltradosMap: Map<number, any[]> = new Map();
+  pratoControl = new FormControl();
+
   // Formulário de novo pedido
   tipoPedido: 'local' | 'delivery' | 'retirada' = 'local';
   formaPagamento: 'dinheiro' | 'cartao_credito' | 'cartao_debito' | 'pix' | 'outros' = 'dinheiro';
@@ -53,6 +65,7 @@ export class MesaVisualizar implements OnInit{
     quantidade: number;
     preco: number;
     pratoNome?: string;
+    pratosFiltrados?: any[];
   }> = [];
 
   // Configuração de status dos pedidos
@@ -74,7 +87,13 @@ export class MesaVisualizar implements OnInit{
   ngOnInit(): void {
     if (this.mesa) {
       this.loadPedidos();
+      this.loadPratos();
     }
+
+    this.pratosFiltrados = this.pratoControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterPratos(value || ''))
+    );
   }
 
   loadPedidos(): void {
@@ -112,9 +131,48 @@ export class MesaVisualizar implements OnInit{
     });
   }
 
+  loadPratos(): void {
+    this.pratosService.getPratos().subscribe({
+      next: (pratos) => {
+        this.pratos = pratos;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar pratos:', error);
+      }
+    });
+  }
+
+  private _filterPratos(value: string): any[] {
+    if (!value) return this.pratos;
+
+    const filterValue = this.normalizarTexto(value);
+
+    return this.pratos.filter(prato => {
+      const nomeNormalizado = this.normalizarTexto(prato.nome);
+      const descricaoNormalizada = prato.descricao ?
+        this.normalizarTexto(prato.descricao) : '';
+
+      return nomeNormalizado.includes(filterValue) ||
+        descricaoNormalizada.includes(filterValue);
+    });
+  }
+
   // Métodos para novo pedido
+  startNovoPedido(): void {
+    if (this.mesa?.status == 'manutencao') {
+      this.toastr.warning("Mesa em manutenção. Não é possível criar pedidos.", "Atenção");
+      return;
+    }
+    this.showNewOrder = true;
+  }
   adicionarItem(): void {
-    this.itens.push({ pratoId: 0, quantidade: 1, preco: 0 });
+    this.itens.push({
+      pratoId: 0,
+      quantidade: 1,
+      preco: 0,
+      pratosFiltrados: []
+    });
+    this.pratoControl.setValue('');
   }
 
   removerItem(index: number): void {
@@ -122,9 +180,26 @@ export class MesaVisualizar implements OnInit{
   }
 
   atualizarItem(index: number, campo: string, valor: any): void {
-    if (campo === 'pratoId') {
-      // buscar nome e valor do prato
-      this.itens[index].pratoId = Number(valor);
+    if (campo === 'pratoId' && typeof valor === 'object') {
+      // Se valor for um objeto de prato completo
+      const prato = valor;
+      this.itens[index] = {
+        ...this.itens[index],
+        pratoId: prato.id,
+        preco: typeof prato.preco === 'string' ? parseFloat(prato.preco) : prato.preco,
+        pratoNome: prato.nome
+      };
+    } else if (campo === 'pratoId' && typeof valor === 'number') {
+      // Se valor for apenas o ID, busca o prato
+      const prato = this.pratos.find(p => p.id === Number(valor));
+      if (prato) {
+        this.itens[index] = {
+          ...this.itens[index],
+          pratoId: prato.id,
+          preco: typeof prato.preco === 'string' ? parseFloat(prato.preco) : prato.preco,
+          pratoNome: prato.nome
+        };
+      }
     } else if (campo === 'quantidade') {
       this.itens[index].quantidade = Number(valor);
     } else if (campo === 'preco') {
@@ -236,5 +311,42 @@ export class MesaVisualizar implements OnInit{
       tap(nome => this.pratosCache.set(pratoId, nome)),
       catchError(() => of(`Item #${pratoId}`))
     );
+  }
+
+  searchPratos(search: string, index: number): void {
+    this.itens[index].pratoNome = search;
+
+    // Filtra os pratos baseado na busca
+    if (search) {
+      const filterValue = this.normalizarTexto(search);
+
+      const resultados = this.pratos.filter(prato => {
+        // Normaliza o nome do prato e a descrição
+        const nomeNormalizado = this.normalizarTexto(prato.nome);
+        const descricaoNormalizada = prato.descricao ?
+          this.normalizarTexto(prato.descricao) : '';
+
+        // Busca no nome ou descrição
+        return nomeNormalizado.includes(filterValue) ||
+          descricaoNormalizada.includes(filterValue);
+      });
+
+      this.itens[index].pratosFiltrados = resultados;
+    } else {
+      this.itens[index].pratosFiltrados = [];
+    }
+  }
+
+  normalizarTexto(texto: string): string {
+    return texto
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
+  selectPratoSimple(prato: any, index: number): void {
+    this.atualizarItem(index, 'pratoId', prato);
+    this.itens[index].pratosFiltrados = [];
+    this.itens[index].pratoNome = prato.nome;
   }
 }

@@ -6,6 +6,7 @@ import {Mesa, MesasService} from '../../services/mesas/mesas.service';
 import {ToastrService} from 'ngx-toastr';
 import {MesaSalvar} from './mesa-salvar/mesa-salvar';
 import {MesaVisualizar} from './mesa-visualizar/mesa-visualizar';
+import {itemAnimation} from '../../animations/ItemAnimation';
 
 interface StatusConfig {
   label: string;
@@ -26,6 +27,7 @@ interface StatusConfig {
   standalone: true,
   templateUrl: './mesas.html',
   styleUrl: './mesas.css',
+  animations: [itemAnimation]
 })
 export class Mesas implements OnInit{
   mesas: Mesa[] = [];

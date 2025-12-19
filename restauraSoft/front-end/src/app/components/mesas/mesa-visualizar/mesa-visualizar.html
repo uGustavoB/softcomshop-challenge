@@ -43,7 +43,7 @@
             Pedidos desta Mesa
           </h3>
           <button
-            (click)="showNewOrder = true"
+            (click)="startNovoPedido()"
             class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
           >
             <mat-icon fontSet="material-symbols-rounded" class="mr-2">add</mat-icon>
@@ -184,16 +184,34 @@
                 </div>
 
                 <div *ngFor="let item of itens; let i = index" class="flex gap-3 items-end p-3 rounded-lg bg-neutral-900/50 border border-neutral-700">
-                  <!-- Prato -->
+                  <!-- Prato com autocomplete -->
                   <div class="flex-1 space-y-2">
                     <label class="text-neutral-300 text-xs">Prato</label>
-                    <input
-                      type="number"
-                      [(ngModel)]="item.pratoId"
-                      (ngModelChange)="atualizarItem(i, 'pratoId', $event)"
-                      class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 text-sm"
-                      placeholder="ID do prato"
-                    />
+                    <div class="">
+                      <input
+                        type="text"
+                        [(ngModel)]="item.pratoNome"
+                        (input)="searchPratos(item.pratoNome || '', i)"
+                        placeholder="Buscar prato..."
+                        class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 placeholder:text-neutral-500"
+                      />
+
+                      <!-- Dropdown de resultados -->
+                      <div *ngIf="item.pratosFiltrados && item.pratosFiltrados.length > 0"
+                           class="absolute z-50 mt-1 w-full bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg max-h-60 overflow-y-auto max-w-lg">
+                        <div *ngFor="let prato of item.pratosFiltrados"
+                             (click)="selectPratoSimple(prato, i)"
+                             class="px-3 py-2 hover:bg-neutral-700 cursor-pointer flex justify-between items-center">
+                          <div class="flex-1">
+                            <div class="text-white text-sm">{{ prato.nome }}</div>
+                            <div *ngIf="prato.descricao" class="text-neutral-400 text-xs truncate">{{ prato.descricao }}</div>
+                          </div>
+                          <div class="text-amber-500 text-sm font-medium whitespace-nowrap ml-2">
+                            R$ {{ formatNumber(prato.preco) }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <!-- Quantidade -->
@@ -208,15 +226,12 @@
                     />
                   </div>
 
-                  <!-- Preço -->
+                  <!-- Preço (automático ao selecionar prato) -->
                   <div class="w-28 space-y-2">
                     <label class="text-neutral-300 text-xs">Preço Unit.</label>
                     <input
                       type="number"
                       [(ngModel)]="item.preco"
-                      (ngModelChange)="atualizarItem(i, 'preco', $event)"
-                      step="0.01"
-                      min="0"
                       class="w-full bg-neutral-900 border border-neutral-700 text-white rounded-lg px-3 py-2 text-sm"
                       placeholder="0.00"
                     />
@@ -226,7 +241,7 @@
                   <button
                     type="button"
                     (click)="removerItem(i)"
-                    class="border border-red-900 text-red-400 hover:bg-red-950 bg-transparent p-2 rounded-lg"
+                    class="border border-red-900 text-red-400 hover:bg-red-950 bg-transparent p-2 rounded-lg flex items-center justify-center"
                   >
                     <mat-icon fontSet="material-symbols-rounded" class="text-sm">delete</mat-icon>
                   </button>
