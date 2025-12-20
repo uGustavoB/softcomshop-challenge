@@ -1,0 +1,300 @@
+<div class="min-h-screen bg-background">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex min-h-screen items-center justify-center bg-background">
+    <div class="text-center">
+      <mat-icon fontSet="material-symbols-rounded" class="mx-auto h-12 w-12 animate-bounce text-primary">chef_hat</mat-icon>
+      <p class="mt-4 text-lg text-neutral-400">Carregando cardápio...</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading" class="min-h-screen">
+    <!-- Hero Section -->
+    <section class="relative h-[70vh] overflow-hidden">
+      <div
+        class="absolute inset-0 bg-cover bg-center"
+        style="background-image: url('assets/images/elegant-restaurant-interior.jpg')">
+      </div>
+
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-amber-500/40 via-orange-600/50 to-orange-800/50">
+      </div>
+
+      <!-- Overlay escuro para contraste -->
+      <div class="absolute inset-0 bg-black/30"></div>
+
+      <div class="relative flex h-full flex-col items-center justify-center px-4 text-center">
+        <div class="animate-fade-up">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat mx-auto mb-6 h-20 w-20 text-white"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z" ></path><path d="M6 17h12"></path></svg>
+          <h1 class="mb-4 text-balance font-serif text-5xl font-bold tracking-tight text-white md:text-7xl">
+            RestauraSoft
+          </h1>
+          <p class="mx-auto max-w-2xl text-balance text-lg leading-relaxed text-white/90 md:text-xl">
+            Uma experiência gastronômica única, onde cada prato conta uma história e cada sabor cria memórias
+            inesquecíveis
+          </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mt-12 w-full max-w-2xl animate-fade-up animation-delay-200">
+          <div class="relative">
+            <mat-icon fontSet="material-symbols-rounded" class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400">search</mat-icon>
+            <input
+              type="text"
+              placeholder="Buscar pratos no cardápio..."
+              [value]="searchTerm"
+              (input)="onSearchChange($event)"
+              class="h-14 w-full rounded-full border-2 border-white/20 bg-white/10 pl-12 pr-12 text-lg text-white backdrop-blur-sm placeholder:text-white/60 focus:border-white/40 focus:outline-none"
+            />
+            <button
+              *ngIf="searchTerm"
+              (click)="clearSearch()"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
+            >
+              <mat-icon fontSet="material-symbols-rounded" class="h-5 w-5">close</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Login Link -->
+        <div class="mt-8 animate-fade-up animation-delay-300">
+          <a [routerLink]="'/login'" routerLinkActive="active">
+            <button class="rounded-full bg-white px-8 py-3 text-amber-600 hover:bg-gray-100 transition-colors font-medium">
+              Área Administrativa
+            </button>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category Filter -->
+    <section class="sticky top-0 z-40 border-b border-neutral-800 bg-neutral-950/95 backdrop-blur">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex gap-2 overflow-x-auto pb-2">
+          <button
+            [class]="selectedCategoria === null ?
+                     'rounded-full bg-amber-500 text-white px-6 py-2' :
+                     'rounded-full border border-neutral-700 text-neutral-300 px-6 py-2 hover:bg-neutral-800 bg-transparent'"
+            (click)="selectCategoria(null)"
+            class="shrink-0 transition-colors"
+          >
+            Todos
+          </button>
+          <button
+            *ngFor="let categoria of categorias"
+            [class]="selectedCategoria === categoria.id ?
+                     'rounded-full bg-amber-500 text-white px-6 py-2' :
+                     'rounded-full border border-neutral-700 text-neutral-300 px-6 py-2 hover:bg-neutral-800 bg-transparent'"
+            (click)="selectCategoria(categoria.id)"
+            class="shrink-0 transition-colors"
+          >
+            {{ categoria.nome }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Content -->
+    <section class="container mx-auto px-4 py-16">
+      <!-- Mostrar todas as categorias -->
+      <ng-container *ngIf="selectedCategoria === null">
+        <div class="space-y-24">
+          <div *ngFor="let categoria of categorias"
+               [id]="'categoria-' + categoria.id"
+               class="animate-fade-up">
+
+            <!-- Mostra categoria apenas se tiver pratos -->
+            <ng-container *ngIf="hasPratosInCategory(categoria.id)">
+              <div class="mb-8 text-center">
+                <h2 class="mb-2 font-serif text-4xl font-bold text-white md:text-5xl">{{ categoria.nome }}</h2>
+                <p class="mx-auto max-w-2xl text-balance text-lg leading-relaxed text-neutral-400">
+                  {{ categoria.descricao }}
+                </p>
+              </div>
+
+              <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div *ngFor="let prato of getPratosByCategoria(categoria.id); let index = index"
+                     (click)="openPratoModal(prato)"
+                     class="group cursor-pointer animate-fade-up"
+                     [style.animation-delay]="index * 50 + 'ms'">
+
+                  <div class="overflow-hidden rounded-2xl bg-neutral-900/50 backdrop-blur-sm shadow-sm border border-neutral-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-neutral-700">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-neutral-800">
+                      <div *ngIf="getPratoImage(prato); else placeholder" class="w-full h-full">
+                        <img
+                          [src]="getPratoImage(prato)"
+                          [alt]="prato.nome"
+                          class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                          (error)="prato.imagem_url = 'assets/images/placeholder.svg'"
+                        />
+                      </div>
+                      <ng-template #placeholder>
+                        <div class="w-full h-full flex items-center justify-center">
+                          <mat-icon fontSet="material-symbols-rounded" class="text-6xl text-neutral-500">restaurant</mat-icon>
+                        </div>
+                      </ng-template>
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                    </div>
+                    <div class="p-6">
+                      <div class="mb-2 flex items-start justify-between gap-2">
+                        <h3 class="text-balance font-serif text-xl font-semibold leading-tight text-white">
+                          {{ prato.nome }}
+                        </h3>
+                        <span class="shrink-0 rounded-full bg-neutral-800 text-white px-3 py-1 text-base font-bold">
+                          R$ {{ prato.preco.toFixed(2) }}
+                        </span>
+                      </div>
+                      <p class="line-clamp-2 text-pretty leading-relaxed text-neutral-400">
+                        {{ prato.descricao || 'Descrição não disponível' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Mostrar apenas categoria selecionada -->
+      <ng-container *ngIf="selectedCategoria !== null">
+        <div class="animate-fade-up">
+          <!-- Obtém a categoria selecionada -->
+          <ng-container *ngIf="getCategoriaById(selectedCategoria) as categoria">
+            <!-- Verifica se há pratos na categoria -->
+            <ng-container *ngIf="hasPratosInCategory(selectedCategoria); else noPratos">
+              <div class="mb-12 text-center">
+                <h2 class="mb-2 font-serif text-4xl font-bold text-white md:text-5xl">{{ categoria.nome }}</h2>
+                <p class="mx-auto max-w-2xl text-balance text-lg leading-relaxed text-neutral-400">
+                  {{ categoria.descricao }}
+                </p>
+              </div>
+
+              <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                <div *ngFor="let prato of getPratosByCategoria(selectedCategoria); let index = index"
+                     (click)="openPratoModal(prato)"
+                     class="group cursor-pointer animate-fade-up"
+                     [style.animation-delay]="index * 50 + 'ms'">
+
+                  <div class="overflow-hidden rounded-2xl bg-neutral-900/50 backdrop-blur-sm shadow-sm border border-neutral-800 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-neutral-700">
+                    <div class="relative aspect-[4/3] overflow-hidden bg-neutral-800">
+                      <div *ngIf="getPratoImage(prato); else placeholder" class="w-full h-full">
+                        <img
+                          [src]="getPratoImage(prato)"
+                          [alt]="prato.nome"
+                          class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                          (error)="prato.imagem_url = 'assets/images/placeholder.svg'"
+                        />
+                      </div>
+                      <ng-template #placeholder>
+                        <div class="w-full h-full flex items-center justify-center">
+                          <mat-icon fontSet="material-symbols-rounded" class="text-6xl text-neutral-500">restaurant</mat-icon>
+                        </div>
+                      </ng-template>
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+
+                      <!-- Badge de status -->
+                      <div class="absolute top-2 right-2">
+                        <span [class]="getStatusBadgeClass(prato.ativo)">
+                          {{ prato.ativo ? 'Ativo' : 'Inativo' }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="p-6">
+                      <div class="mb-2 flex items-start justify-between gap-2">
+                        <h3 class="text-balance font-serif text-xl font-semibold leading-tight text-white">
+                          {{ prato.nome }}
+                        </h3>
+                        <span class="shrink-0 rounded-full bg-neutral-800 text-white px-3 py-1 text-base font-bold">
+                          R$ {{ prato.preco.toFixed(2) }}
+                        </span>
+                      </div>
+                      <p class="line-clamp-2 text-pretty leading-relaxed text-neutral-400">
+                        {{ prato.descricao || 'Descrição não disponível' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- Template para quando não há pratos -->
+            <ng-template #noPratos>
+              <div class="py-20 text-center">
+                <mat-icon fontSet="material-symbols-rounded" class="mx-auto mb-4 h-16 w-16 text-neutral-500/50">restaurant</mat-icon>
+                <p class="text-lg text-neutral-400">Nenhum prato encontrado nesta categoria.</p>
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <!-- Sem resultados de busca -->
+      <div *ngIf="selectedCategoria === null && !hasResults()" class="py-20 text-center">
+        <mat-icon fontSet="material-symbols-rounded" class="mx-auto mb-4 h-16 w-16 text-neutral-500/50">restaurant</mat-icon>
+        <p class="text-lg text-neutral-400">Nenhum prato encontrado com sua busca.</p>
+      </div>
+    </section>
+
+    <!-- Modal de Detalhes do Prato -->
+    <div *ngIf="selectedPrato"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-fade-in"
+         (click)="closePratoModal()">
+
+      <div class="relative max-h-[90vh] w-full max-w-3xl overflow-auto rounded-3xl bg-neutral-900 border border-neutral-800 shadow-2xl animate-scale-up"
+           (click)="$event.stopPropagation()">
+
+        <button
+          (click)="closePratoModal()"
+          class="absolute right-4 top-4 z-10 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
+        >
+          <mat-icon fontSet="material-symbols-rounded" class="h-6 w-6">close</mat-icon>
+        </button>
+
+        <div class="relative aspect-[16/9] overflow-hidden bg-neutral-800">
+          <div *ngIf="getPratoImage(selectedPrato); else modalPlaceholder" class="w-full h-full">
+            <img
+              [src]="getPratoImage(selectedPrato)"
+              [alt]="selectedPrato.nome"
+              class="h-full w-full object-cover"
+              (error)="selectedPrato.imagem_url = 'assets/images/placeholder.svg'"
+            />
+          </div>
+          <ng-template #modalPlaceholder>
+            <div class="w-full h-full flex items-center justify-center">
+              <mat-icon fontSet="material-symbols-rounded" class="text-6xl text-neutral-500">restaurant</mat-icon>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="p-8">
+          <div class="mb-4 flex items-start justify-between gap-4">
+            <h2 class="text-balance font-serif text-3xl font-bold text-white md:text-4xl">
+              {{ selectedPrato.nome }}
+            </h2>
+            <span class="shrink-0 rounded-full bg-neutral-800 text-white px-4 py-2 text-2xl font-bold">
+              R$ {{ selectedPrato.preco.toFixed(2) }}
+            </span>
+          </div>
+          <p class="text-pretty text-lg leading-relaxed text-neutral-400">
+            {{ selectedPrato.descricao || 'Descrição não disponível' }}
+          </p>
+
+          <div class="mt-8">
+            <span class="rounded-full border border-neutral-700 px-3 py-1 text-sm text-neutral-300">
+              {{ getCategoriaName(selectedPrato.categoria_id) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-neutral-800 bg-neutral-900/30 py-12">
+      <div class="container mx-auto px-4 text-center">
+        <mat-icon fontSet="material-symbols-rounded" class="mx-auto mb-4 h-10 w-10 text-amber-500">restaurant</mat-icon>
+        <p class="text-sm text-neutral-500">© {{ currentYear }} RestauraSoft. Todos os direitos reservados.</p>
+      </div>
+    </footer>
+  </div>
+</div>

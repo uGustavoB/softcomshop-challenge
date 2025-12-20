@@ -24,12 +24,18 @@ Route::controller(AuthController::class)->group(function () {
 
 });
 
+// Rotas públicas
+Route::get('/prato', 'App\Http\Controllers\PratoController@listagem');
+Route::get('/prato/{id}', 'App\Http\Controllers\PratoController@buscar');
+
+Route::get('/categoria', 'App\Http\Controllers\CategoriaController@listagem');
+Route::get('/categoria/{id}', 'App\Http\Controllers\CategoriaController@buscar');
+
+// Rotas protegidas por autenticação JWT
 Route::group([
     'middleware' => 'jwt.auth',
     'prefix' => 'prato'
 ], function () {
-    Route::get('/', 'App\Http\Controllers\PratoController@listagem');
-    Route::get('/{id}', 'App\Http\Controllers\PratoController@buscar');
     Route::post('/', 'App\Http\Controllers\PratoController@cadastrar');
     Route::put('/{id}', 'App\Http\Controllers\PratoController@editar');
     Route::delete('/{id}', 'App\Http\Controllers\PratoController@deletar');
@@ -39,8 +45,6 @@ Route::group([
     'middleware' => 'jwt.auth',
     'prefix' => 'categoria'
 ], function () {
-    Route::get('/', 'App\Http\Controllers\CategoriaController@listagem');
-    Route::get('/{id}', 'App\Http\Controllers\CategoriaController@buscar');
     Route::post('/', 'App\Http\Controllers\CategoriaController@cadastrar');
     Route::put('/{id}', 'App\Http\Controllers\CategoriaController@editar');
     Route::delete('/{id}', 'App\Http\Controllers\CategoriaController@deletar');

@@ -101,7 +101,7 @@ export class Login {
 
         if (response.status === 'success') {
           this.toastr.success('Login realizado com sucesso!', 'Bem-vindo');
-          this.router.navigate(['/categorias']);
+          this.router.navigate(['/pedidos']);
         } else {
           this.error = response.message || 'Erro no login';
           this.toastr.error(this.error, 'Erro');
@@ -128,7 +128,7 @@ export class Login {
       next: (response: ApiResponse<any>) => {
         if (response.status === 'success') {
           this.toastr.success('Cadastro realizado com sucesso!', 'Bem-vindo');
-          this.router.navigate(['/categorias']);
+          this.router.navigate(['/pedidos']);
         } else {
           this.error = response.message || 'Erro no registro';
           this.toastr.error(this.error, 'Erro');

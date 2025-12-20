@@ -5,11 +5,21 @@ import {Categorias} from './components/categorias/categorias';
 import {Pratos} from './components/pratos/pratos';
 import {Mesas} from './components/mesas/mesas';
 import {Pedidos} from './components/pedidos/pedidos';
+import {CardapioPublicoComponent} from './components/cardapio-publico/cardapio-publico';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'cardapio',
+    pathMatch: 'full'
+  },
+  {
     path: 'login',
     component: Login
+  },
+  {
+    path: 'cardapio',
+    component: CardapioPublicoComponent
   },
   {
     path: '',
@@ -30,11 +40,6 @@ export const routes: Routes = [
       {
         path: 'categorias',
         component: Categorias
-      },
-      {
-        path: '',
-        redirectTo: 'pedidos',
-        pathMatch: 'full'
       }
     ]
   },
