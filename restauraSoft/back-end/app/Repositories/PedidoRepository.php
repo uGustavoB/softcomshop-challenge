@@ -65,4 +65,9 @@ class PedidoRepository extends BaseRepository
             ->whereIn('status', ['pendente', 'em_preparo', 'pronto'])
             ->first();
     }
+
+    public function verificarPedidosNaMesa($mesa_id)
+    {
+        return Pedido::where('mesa_id', $mesa_id)->exists();
+    }
 }
