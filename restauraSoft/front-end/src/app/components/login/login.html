@@ -15,13 +15,28 @@
 
       <h1 class="text-3xl font-bold text-white">RestauraSoft</h1>
       <p class="text-neutral-400 text-sm">
-        Sistema de gerenciamento de pedidos e mesas
+        {{ isLoginMode ? 'Faça login para acessar o sistema' : 'Crie sua conta' }}
       </p>
     </div>
 
     <!-- Form -->
     <div class="p-6 pt-0">
       <form (ngSubmit)="onSubmit()" class="space-y-4">
+
+        <!-- Nome (apenas no registro) -->
+        <div *ngIf="!isLoginMode" class="space-y-2">
+          <label class="text-neutral-300 text-sm">Nome completo</label>
+          <input
+            type="text"
+            [(ngModel)]="name"
+            name="name"
+            required
+            [disabled]="isLoading"
+            placeholder="Seu nome"
+            class="w-full h-10 rounded-md bg-neutral-800 border border-neutral-700
+                   text-white placeholder:text-neutral-500 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
 
         <!-- Email -->
         <div class="space-y-2">
@@ -34,7 +49,7 @@
             [disabled]="isLoading"
             placeholder="seu@email.com"
             class="w-full h-10 rounded-md bg-neutral-800 border border-neutral-700
-                   text-white placeholder:text-neutral-500 px-3"
+                   text-white placeholder:text-neutral-500 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
 
@@ -47,9 +62,24 @@
             name="password"
             required
             [disabled]="isLoading"
-            placeholder="••••••••"
+            [placeholder]="isLoginMode ? '••••••••' : 'Mínimo 6 caracteres'"
             class="w-full h-10 rounded-md bg-neutral-800 border border-neutral-700
-                   text-white placeholder:text-neutral-500 px-3"
+                   text-white placeholder:text-neutral-500 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+        </div>
+
+        <!-- Confirmar Senha (apenas no registro) -->
+        <div *ngIf="!isLoginMode" class="space-y-2">
+          <label class="text-neutral-300 text-sm">Confirmar senha</label>
+          <input
+            type="password"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            required
+            [disabled]="isLoading"
+            placeholder="Digite novamente a senha"
+            class="w-full h-10 rounded-md bg-neutral-800 border border-neutral-700
+                   text-white placeholder:text-neutral-500 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
         </div>
 
@@ -67,19 +97,42 @@
           class="w-full h-10 rounded-md text-white font-medium
                  bg-gradient-to-r from-amber-500 to-orange-600
                  hover:from-amber-600 hover:to-orange-700
-                 disabled:opacity-60 flex items-center justify-center">
+                 disabled:opacity-60 flex items-center justify-center
+                 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-neutral-900">
 
-          <ng-container *ngIf="isLoading; else loginText">
-            <mat-icon class="mr-2 animate-spin">autorenew</mat-icon>
-            Entrando...
+          <ng-container *ngIf="isLoading; else buttonText">
+            <mat-icon class="mr-2 animate-spin text-sm">autorenew</mat-icon>
+            {{ isLoginMode ? 'Entrando...' : 'Criando conta...' }}
           </ng-container>
 
-          <ng-template #loginText>
-            Entrar
+          <ng-template #buttonText>
+            {{ isLoginMode ? 'Entrar' : 'Criar conta' }}
           </ng-template>
         </button>
 
+        <!-- Toggle entre login/registro -->
+        <div class="text-center pt-4 border-t border-neutral-800">
+          <p class="text-neutral-400 text-sm">
+            {{ isLoginMode ? 'Não tem uma conta?' : 'Já tem uma conta?' }}
+            <button
+              type="button"
+              (click)="toggleMode()"
+              [disabled]="isLoading"
+              class="text-amber-400 hover:text-amber-300 font-medium ml-1
+                     disabled:opacity-50 focus:outline-none focus:underline"
+            >
+              {{ isLoginMode ? 'Cadastre-se' : 'Faça login' }}
+            </button>
+          </p>
+        </div>
       </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-6 pt-0">
+      <p class="text-center text-xs text-neutral-500">
+        © 2025 RestauraSoft. Todos os direitos reservados.
+      </p>
     </div>
   </div>
 </div>

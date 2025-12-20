@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -55,6 +55,30 @@ export class ApiService {
     return throwError(() => error);
   }
 
+  authPost<T>(url: string, body: any): Observable<ApiResponse<T>> {
+    console.log('Auth POST:', url, body);
+    return this.http.post<ApiResponse<T>>(`${this.apiUrl}/${url}`, body).pipe(
+      tap(response => {
+        console.log('Auth response:', response);
+
+        if (response.authorization?.token) {
+          localStorage.setItem('token', response.authorization.token);
+          console.log('Token salvo:', response.authorization.token);
+        }
+
+        if (response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
+          console.log('Usuário salvo:', response.user);
+        }
+
+        console.log(response.status === 'success' || response.status === 'Success'
+          ? `AUTH POST: ${response.message}`
+          : `AUTH POST failed: ${response.message}`);
+      }),
+      catchError(error => this.handleError(error))
+    );
+  }
+
   get<T>(url: string, params?: HttpParams): Observable<T> {
     return this.http.get<ApiResponse<T>>(`${this.apiUrl}/${url}`, { params }).pipe(
       tap(response => {
@@ -74,14 +98,8 @@ export class ApiService {
     console.log(url, body);
     return this.http.post<ApiResponse<T>>(`${this.apiUrl}/${url}`, body).pipe(
       tap(response => {
-        if (response.authorization?.token) {
-          localStorage.setItem('token', response.authorization.token);
-        }
-        if (response.user) {
-          localStorage.setItem('user', JSON.stringify(response.user));
-        }
         console.log(response.status === 'success' || response.status === 'Success'
-          ? `POST: ${response.message}`
+          ? `POST: ${response}`
           : `POST failed: ${response.message}`);
       }),
       map(response => response.data as T),
@@ -137,4 +155,32 @@ export class ApiService {
   //     catchError(error => this.handleError(error))
   //   );
   // }
+
+// Métodos para FormData (upload de arquivos)
+  postFormData(endpoint: string, formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${endpoint}`, formData, this.getFormDataHeaders());
+  }
+
+  putFormData(endpoint: string, formData: FormData): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${endpoint}`, formData, this.getFormDataHeaders());
+  }
+
+  private getHeaders() {
+    const token = localStorage.getItem('token'); // ajuste conforme seu auth
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      })
+    };
+  }
+
+  private getFormDataHeaders() {
+    const token = localStorage.getItem('token'); // ajuste conforme seu auth
+    return {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      })
+    };
+  }
 }

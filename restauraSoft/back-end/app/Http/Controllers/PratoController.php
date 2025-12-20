@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PratoRequest;
-use App\Repositories\PratoRepository;
 use App\UseCases\Pratos\BuscarPrato\IBuscarPratoUseCase;
 use App\UseCases\Pratos\CriarPratos\ICriarPratosUseCase;
 use App\UseCases\Pratos\DeletarPrato\IDeletarPratoUseCase;

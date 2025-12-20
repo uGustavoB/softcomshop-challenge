@@ -3,6 +3,7 @@
 namespace App\UseCases\Pratos\EditarPratos;
 
 use App\Repositories\PratoRepository;
+use App\Services\ImagemService;
 use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use Illuminate\Support\Facades\Log;
 
@@ -10,10 +11,16 @@ class EditarPratosUseCase implements IEditarPratosUseCase
 {
     private $repository;
     private $verificarCategoriaUseCase;
+    private $imagemService;
 
-    public function __construct(PratoRepository $repository, IVerificarCategoriaUseCase  $verificarCategoriaUseCase) {
+    public function __construct(
+        PratoRepository $repository,
+        IVerificarCategoriaUseCase $verificarCategoriaUseCase,
+        ImagemService  $imagemService
+    ) {
         $this->repository = $repository;
         $this->verificarCategoriaUseCase = $verificarCategoriaUseCase;
+        $this->imagemService = $imagemService;
     }
 
     public function execute($request, $id): array
@@ -31,7 +38,7 @@ class EditarPratosUseCase implements IEditarPratosUseCase
                 if (!$pratoExistente) {
                     return [
                         'status' => 'error',
-                        'message' => 'Prato não encontrada.',
+                        'message' => 'Prato não encontrado.',
                         'data' => null,
                         'http' => 404
                     ];
@@ -44,12 +51,29 @@ class EditarPratosUseCase implements IEditarPratosUseCase
                 throw new \Exception('Categoria inválida.');
             }
 
+            if ($request->hasFile('imagem')) {
+                // Se tem nova imagem, faz upload
+                $caminhoImagem = $this->imagemService->substituir(
+                    $request->file('imagem'),
+                    $pratoExistente->imagem
+                );
+                $dados['imagem'] = $caminhoImagem;
+            } else if (isset($dados['imagem_existente'])) {
+                $dados['imagem'] = $dados['imagem_existente'];
+                unset($dados['imagem_existente']);
+            } else {
+                unset($dados['imagem']);
+            }
+
             $prato =  $this->repository->salvar($dados);
+
+            $pratoDto = $prato->toDto();
+            $pratoDto['imagem_url'] = $this->imagemService->getUrl($prato->imagem);
 
             return [
                 'status' => 'success',
                 'message' => 'Prato editado com sucesso',
-                'data' => $prato->toDto(),
+                'data' => $pratoDto,
                 'http' => 200
             ];
 

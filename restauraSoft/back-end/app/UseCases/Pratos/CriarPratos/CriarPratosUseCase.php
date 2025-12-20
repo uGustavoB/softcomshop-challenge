@@ -3,6 +3,7 @@
 namespace App\UseCases\Pratos\CriarPratos;
 
 use App\Repositories\PratoRepository;
+use App\Services\ImagemService;
 use App\UseCases\Categoria\VerificarCategoria\IVerificarCategoriaUseCase;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -11,13 +12,16 @@ class CriarPratosUseCase implements ICriarPratosUseCase
 {
     private $repository;
     private $verificarCategoriaUseCase;
+    private $imagemService;
 
     public function __construct(
         PratoRepository $repository,
-        IVerificarCategoriaUseCase $verificarCategoriaUseCase
+        IVerificarCategoriaUseCase $verificarCategoriaUseCase,
+        ImagemService  $imagemService
     ) {
         $this->repository = $repository;
         $this->verificarCategoriaUseCase = $verificarCategoriaUseCase;
+        $this->imagemService = $imagemService;
     }
 
     public function execute($dados): array
@@ -31,12 +35,20 @@ class CriarPratosUseCase implements ICriarPratosUseCase
                 throw new Exception("Categoria inválida.", 400);
             }
 
+            if (isset($dados['imagem']) && $dados['imagem']) {
+                $caminhoImagem = $this->imagemService->upload($dados['imagem']);
+                $dados['imagem'] = $caminhoImagem;
+            }
+
             $prato = $this->repository->salvar($dados);
+
+            $pratoDto = $prato->toDto();
+            $pratoDto['imagem_url'] = $this->imagemService->getUrl($prato->imagem);
 
             return [
                 'status' => 'success',
                 'message' => 'Prato salvo com sucesso',
-                'data' => $prato->toDto(),
+                'data' => $pratoDto,
                 'http' => 201
             ];
         } catch (Exception $e) {

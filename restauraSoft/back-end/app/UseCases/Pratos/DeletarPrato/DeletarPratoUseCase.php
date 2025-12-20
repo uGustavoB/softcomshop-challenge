@@ -3,16 +3,20 @@
 namespace App\UseCases\Pratos\DeletarPrato;
 
 use App\Repositories\PratoRepository;
+use App\Services\ImagemService;
 use Illuminate\Support\Facades\Log;
 
 class DeletarPratoUseCase implements IDeletarPratoUseCase
 {
     private $repository;
+    private $imagemService;
 
     public function __construct(
-        PratoRepository $repository
+        PratoRepository $repository,
+        ImagemService $imagemService
     ) {
         $this->repository = $repository;
+        $this->imagemService = $imagemService;
     }
 
     public function execute($id)
@@ -45,6 +49,10 @@ class DeletarPratoUseCase implements IDeletarPratoUseCase
                     'data' => null,
                     'http' => 404
                 ];
+            }
+
+            if ($pratoExistente->imagem) {
+                $this->imagemService->excluir($pratoExistente->imagem);
             }
 
             $this->repository->deletar($id);

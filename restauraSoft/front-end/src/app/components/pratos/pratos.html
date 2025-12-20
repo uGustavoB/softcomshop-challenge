@@ -22,9 +22,9 @@
            class="border border-neutral-800 bg-neutral-900/50 backdrop-blur-sm rounded-lg overflow-hidden group hover:border-neutral-700 transition-colors">
         <!-- Imagem do prato -->
         <div class="aspect-video relative bg-neutral-800 overflow-hidden">
-          <div *ngIf="prato.imagem; else placeholder" class="w-full h-full">
+          <div *ngIf="prato.imagem_url; else placeholder" class="w-full h-full">
             <img
-              [src]="prato.imagem"
+              [src]="prato.imagem_url"
               [alt]="prato.nome"
               class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
             />
@@ -118,19 +118,33 @@
             </ng-template>
           </div>
 
-          <label class="cursor-pointer">
-            <input
-              type="file"
-              (change)="onFileSelected($event)"
-              accept="image/*"
-              class="hidden"
-            />
-            <span class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg inline-flex items-center text-sm transition-colors">
+          <div class="flex gap-2">
+            <label class="cursor-pointer">
+              <input
+                type="file"
+                (change)="onFileSelected($event)"
+                accept="image/jpeg,image/png,image/jpg,image/gif"
+                class="hidden"
+              />
+              <span class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg inline-flex items-center text-sm transition-colors">
                 <mat-icon fontSet="material-symbols-rounded" class="mr-1">upload</mat-icon>
-              {{ imagemPreview ? 'Alterar imagem' : 'Selecionar imagem' }}
+                {{ imagemFile ? 'Alterar imagem' : 'Selecionar imagem' }}
               </span>
-          </label>
-          <p class="text-xs text-neutral-500 text-center">Formatos: JPG, PNG, GIF. Tamanho máximo: 5MB</p>
+            </label>
+
+            <!-- Botão para remover imagem (só aparece se tiver imagem nova selecionada) -->
+            <button
+              *ngIf="imagemFile"
+              type="button"
+              (click)="removerImagem()"
+              class="border border-red-800 text-red-400 hover:bg-red-950 bg-transparent px-4 py-2 rounded-lg inline-flex items-center text-sm transition-colors"
+            >
+              <mat-icon fontSet="material-symbols-rounded" class="mr-1">delete</mat-icon>
+              Remover
+            </button>
+          </div>
+
+          <p class="text-xs text-neutral-500 text-center">Formatos: JPG, PNG, GIF. Tamanho máximo: 2MB</p>
         </div>
       </div>
 
@@ -224,19 +238,19 @@
           type="button"
           (click)="closeEditModal()"
           class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg transition-colors"
-          [disabled]="isLoading || isUploading"
+          [disabled]="isLoading"
         >
           Cancelar
         </button>
         <button
           type="submit"
-          [disabled]="isLoading || isUploading || pratoForm.invalid"
+          [disabled]="isLoading || pratoForm.invalid"
           class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-            <span *ngIf="isLoading || isUploading">
+            <span *ngIf="isLoading">
               <mat-icon fontSet="material-symbols-rounded" class="animate-spin">refresh</mat-icon>
             </span>
-          <span *ngIf="!isLoading && !isUploading">{{ selectedPrato ? 'Salvar' : 'Criar' }}</span>
+          <span *ngIf="!isLoading">{{ selectedPrato ? 'Salvar' : 'Criar' }}</span>
         </button>
       </div>
     </form>
