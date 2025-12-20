@@ -58,7 +58,7 @@ class CriarItemPedidoUseCase implements ICriarItemPedidoUseCase
                 throw new \Exception('ID do pedido não fornecido.', 400);
             }
 
-            $pedido = $this->pedidoRepository->buscarPorId($dados['pedido_id']); // CORREÇÃO: mudado para pedidoRepository
+            $pedido = $this->pedidoRepository->buscarPorId($dados['pedido_id']);
 
             if (!$pedido) {
                 throw new \Exception('Pedido não encontrado.', 404);

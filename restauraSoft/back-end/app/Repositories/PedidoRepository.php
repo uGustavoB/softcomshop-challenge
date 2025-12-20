@@ -52,8 +52,10 @@ class PedidoRepository extends BaseRepository
         return true;
     }
 
-    public function buscarPorId(int $id)
+    public function buscarPorId($id)
     {
-        return $this->model()::find($id);
+        return Pedido::where('id', $id)
+            ->lockForUpdate()
+            ->first();
     }
 }
