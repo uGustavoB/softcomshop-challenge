@@ -4,6 +4,7 @@ import {Sidebar} from './components/core/sidebar/sidebar';
 import {Categorias} from './components/categorias/categorias';
 import {Pratos} from './components/pratos/pratos';
 import {Mesas} from './components/mesas/mesas';
+import {Pedidos} from './components/pedidos/pedidos';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,10 @@ export const routes: Routes = [
     path: '',
     component: Sidebar,
     children: [
+      {
+        path: 'pedidos',
+        component: Pedidos
+      },
       {
         path: 'mesas',
         component: Mesas

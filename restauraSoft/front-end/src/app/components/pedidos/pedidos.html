@@ -1,0 +1,154 @@
+<div class="space-y-6">
+  <!-- Cabeçalho -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-white">Pedidos</h1>
+      <p class="text-neutral-400 mt-1">Gerencie todos os pedidos do restaurante</p>
+    </div>
+  </div>
+
+  <!-- Tabela de pedidos -->
+  <div class="border border-neutral-800 bg-neutral-900/50 backdrop-blur-sm rounded-lg overflow-hidden">
+    <div class="p-6 border-b border-neutral-800">
+      <h3 class="text-white flex items-center gap-2 text-lg font-semibold">
+        <mat-icon fontSet="material-symbols-rounded" class="text-amber-500">shopping_bag</mat-icon>
+        Lista de Pedidos
+      </h3>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full" *ngIf="pedidos.length > 0; else emptyState">
+        <thead>
+        <tr class="border-b border-neutral-800 hover:bg-transparent">
+          <th class="text-left py-3 px-6 text-neutral-400 font-medium">Pedido</th>
+          <th class="text-left py-3 px-6 text-neutral-400 font-medium">Mesa</th>
+          <th class="text-left py-3 px-6 text-neutral-400 font-medium">Data</th>
+          <th class="text-left py-3 px-6 text-neutral-400 font-medium">Tipo</th>
+          <th class="text-left py-3 px-6 text-neutral-400 font-medium">Pagamento</th>
+          <th class="text-center py-3 px-6 text-neutral-400 font-medium">Status</th>
+          <th class="text-right py-3 px-6 text-neutral-400 font-medium">Valor Total</th>
+          <th class="text-center py-3 px-6 text-neutral-400 font-medium">Ações</th>
+        </tr>
+        </thead>
+        <tbody @itemAnimation>
+        <tr *ngFor="let pedido of pedidos"
+            class="border-b border-neutral-800 hover:bg-neutral-800/50 transition-colors">
+
+          <td class="py-3 px-6 font-medium text-white">#{{ pedido.id }}</td>
+          <td class="py-3 px-6 text-neutral-300">Mesa {{ pedido.mesa_id }}</td>
+
+          <td class="py-3 px-6 text-neutral-400">
+            {{ pedido.data_pedido | date:'dd/MM/yyyy' }}
+            <br />
+            <span class="text-xs text-neutral-500">
+                {{ pedido.data_pedido | date:'HH:mm' }}
+              </span>
+          </td>
+
+          <td class="py-3 px-6 text-neutral-300 capitalize">{{ pedido.tipo_pedido }}</td>
+          <td class="py-3 px-6 text-neutral-300 capitalize">
+            {{ formatPaymentMethod(pedido.forma_pagamento) }}
+          </td>
+
+          <td class="py-3 px-6 text-center">
+              <span [class]="'inline-flex items-center gap-1 px-2 py-1 rounded font-medium ' + getStatusInfo(pedido.status).bgColor + ' ' + getStatusInfo(pedido.status).color">
+                <mat-icon fontSet="material-symbols-rounded" class="text-xs !text-[16px] !h-4 !w-4">
+                  {{ getStatusInfo(pedido.status).icon }}
+                </mat-icon>
+                  {{ getStatusInfo(pedido.status).label }}
+              </span>
+          </td>
+
+          <td class="py-3 px-6 text-right">
+              <span class="text-emerald-400 font-semibold">
+                R$ {{ formatCurrency(pedido.valor_total) }}
+              </span>
+          </td>
+
+          <td class="py-3 px-6 text-right">
+            <div class="flex justify-center gap-2">
+              <button
+                (click)="handleVerDetalhes(pedido.id)"
+                class="border border-neutral-700 text-blue-400 hover:bg-blue-950 bg-transparent p-1.5 rounded-lg flex items-center justify-center transition-colors"
+              >
+                <mat-icon fontSet="material-symbols-rounded" class="text-sm">visibility</mat-icon>
+              </button>
+              <button
+                (click)="handleEdit(pedido.id)"
+                class="border border-neutral-700 text-amber-400 hover:bg-amber-950 bg-transparent p-1.5 rounded-lg flex items-center justify-center transition-colors"
+              >
+                <mat-icon fontSet="material-symbols-rounded" class="text-sm">edit</mat-icon>
+              </button>
+              <button
+                (click)="handleDelete(pedido.id)"
+                class="border border-neutral-700 text-red-400 hover:bg-red-950 bg-transparent p-1.5 rounded-lg flex items-center justify-center transition-colors"
+              >
+                <mat-icon fontSet="material-symbols-rounded" class="text-sm">delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyState>
+        <div class="py-12 text-center">
+          <mat-icon fontSet="material-symbols-rounded" class="text-neutral-500 text-5xl mb-4">
+            shopping_bag
+          </mat-icon>
+          <p class="text-neutral-500">Nenhum pedido encontrado</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Detalhes do Pedido -->
+<app-pedido-detalhes
+  *ngIf="isModalOpen && selectedPedidoId"
+  [pedidoId]="selectedPedidoId"
+  (close)="closeModal()"
+></app-pedido-detalhes>
+
+<!-- Modal de Edição do Pedido -->
+<app-pedido-editar
+  *ngIf="isEditModalOpen && selectedPedidoId"
+  [pedidoId]="selectedPedidoId"
+  (close)="closeEditModal()"
+></app-pedido-editar>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div *ngIf="isDeleteModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-neutral-900 border border-neutral-800 rounded-lg w-full max-w-md text-white">
+    <div class="p-6 border-b border-neutral-800">
+      <h2 class="text-xl font-bold">Confirmar Exclusão</h2>
+    </div>
+
+    <div class="p-6">
+      <p class="text-neutral-300">
+        Tem certeza que deseja excluir este pedido?
+      </p>
+      <p class="text-sm text-neutral-500 mt-2">Esta ação não pode ser desfeita.</p>
+    </div>
+
+    <div class="p-6 border-t border-neutral-800 flex justify-end gap-3">
+      <button
+        (click)="closeDeleteModal()"
+        class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg transition-colors"
+        [disabled]="isLoading"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="confirmDelete()"
+        [disabled]="isLoading"
+        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span *ngIf="isLoading">
+          <mat-icon fontSet="material-symbols-rounded" class="animate-spin">refresh</mat-icon>
+        </span>
+        <span *ngIf="!isLoading">Excluir</span>
+      </button>
+    </div>
+  </div>
+</div>

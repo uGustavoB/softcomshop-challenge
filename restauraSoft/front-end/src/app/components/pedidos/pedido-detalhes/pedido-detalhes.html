@@ -1,0 +1,103 @@
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-neutral-900 border border-neutral-800 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto text-white">
+    <!-- Header -->
+    <div class="p-6 border-b border-neutral-800 sticky top-0 bg-neutral-900 z-10">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold">Detalhes do Pedido #{{ pedido?.id }}</h2>
+        <button
+          (click)="closeModal()"
+          class="text-neutral-400 hover:text-white"
+        >
+          <mat-icon fontSet="material-symbols-rounded">close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="p-6 space-y-6">
+      <!-- Informações básicas -->
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-neutral-400 text-sm font-medium mb-1">Mesa</h3>
+            <p class="text-white text-lg">Mesa {{ pedido?.mesa_id }}</p>
+          </div>
+
+          <div>
+            <h3 class="text-neutral-400 text-sm font-medium mb-1">Data e Hora</h3>
+            <p class="text-white">{{ pedido?.data_pedido | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+
+          <div>
+            <h3 class="text-neutral-400 text-sm font-medium mb-1">Tipo do Pedido</h3>
+            <p class="text-white capitalize">{{ pedido?.tipo_pedido }}</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-neutral-400 text-sm font-medium mb-1">Status</h3>
+            <span *ngIf="pedido" [class]="'inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ' + getStatusInfo(pedido.status).bgColor + ' ' + getStatusInfo(pedido.status).color">
+              {{ getStatusInfo(pedido.status).label }}
+            </span>
+          </div>
+
+          <div>
+            <h3 class="text-neutral-400 text-sm font-medium mb-1">Forma de Pagamento</h3>
+            <p class="text-white capitalize">{{ pedido?.forma_pagamento?.replace('_', ' ') }}</p>
+          </div>
+
+          <div>
+            <h3 class="text-neutral-400 text-sm font-medium mb-1">Valor Total</h3>
+            <p class="text-emerald-400 text-2xl font-bold">
+              R$ {{ pedido ? formatCurrency(pedido.valor_total) : '0.00' }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observações -->
+      <div *ngIf="pedido?.observacoes" class="border-t border-neutral-800 pt-6">
+        <h3 class="text-neutral-400 text-sm font-medium mb-2">Observações</h3>
+        <p class="text-white bg-neutral-800/50 p-4 rounded-lg">{{ pedido?.observacoes }}</p>
+      </div>
+
+      <!-- Itens do Pedido -->
+      <div class="border-t border-neutral-800 pt-6">
+        <h3 class="text-white font-semibold text-lg mb-4">Itens do Pedido</h3>
+
+        <div class="space-y-3">
+          <div *ngIf="pedidoItems.length === 0" class="text-center text-neutral-500 py-8">
+            Nenhum item neste pedido
+          </div>
+
+          <div *ngFor="let item of pedidoItems"
+               class="flex items-center justify-between p-4 rounded-lg bg-neutral-800/50 border border-neutral-700">
+            <div class="flex-1">
+              <div class="text-white text-sm font-medium">{{ pratosNomes[item.prato_id] || 'Carregando...' }}</div>
+              <div class="text-neutral-400 text-xs mt-1">
+                Quantidade: {{ item.quantidade }} • Preço unitário: R$ {{ formatCurrency(item.preco_unitario) }}
+              </div>
+              <div *ngIf="item.observacoes" class="text-neutral-500 text-xs mt-2 italic">
+                {{ item.observacoes }}
+              </div>
+            </div>
+            <div class="text-amber-400 font-medium text-lg">
+              R$ {{ formatCurrency(item.preco_unitario * item.quantidade) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botão de fechar -->
+      <div class="flex justify-end pt-4 border-t border-neutral-800">
+        <button
+          (click)="closeModal()"
+          class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg transition-colors"
+        >
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
