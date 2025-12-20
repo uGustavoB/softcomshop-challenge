@@ -4,6 +4,8 @@ namespace App\UseCases\Pedido\CriarPedido;
 
 use App\Repositories\MesaRepository;
 use App\Repositories\PedidoRepository;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CriarPedidoUseCase implements ICriarPedidoUseCase
@@ -11,9 +13,6 @@ class CriarPedidoUseCase implements ICriarPedidoUseCase
     private $repository;
     private $mesaRepository;
 
-    /**
-     * @param $repository
-     */
     public function __construct(
         PedidoRepository $repository,
         MesaRepository $mesaRepository
@@ -24,8 +23,10 @@ class CriarPedidoUseCase implements ICriarPedidoUseCase
     }
 
 
-    public function execute(array $dados)
+    public function execute(array $dados): array
     {
+        DB::beginTransaction();
+
         try {
             if (isset($dados['mesa_id'])) {
                 $mesaExistente = $this->mesaRepository->buscarPorId($dados['mesa_id']);
@@ -33,11 +34,17 @@ class CriarPedidoUseCase implements ICriarPedidoUseCase
                 if (!$mesaExistente) {
                     throw new \Exception("Mesa não encontrada.", 404);
                 }
+
+                if ($mesaExistente->status !== 'livre' && $mesaExistente->status !== 'ocupada' && !isset($dados['force'])) {
+                    throw new \Exception("Mesa não está disponível. Status: {$mesaExistente->status}", 409);
+                }
             } else {
                 throw new \Exception('ID da mesa não fornecido.');
             }
 
             $pedido = $this->repository->salvar($dados)->fresh();
+
+            DB::commit();
 
             return [
                 'status' => 'success',
@@ -47,6 +54,7 @@ class CriarPedidoUseCase implements ICriarPedidoUseCase
             ];
 
         } catch (Exception $e) {
+            DB.rollBack();
 
             Log::error("Erro ao criar pedido: " . $e->getMessage());
 

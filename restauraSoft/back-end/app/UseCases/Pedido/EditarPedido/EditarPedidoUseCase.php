@@ -40,6 +40,12 @@ class EditarPedidoUseCase implements IEditarPedidoUseCase
                 }
             }
 
+            if (isset($dados['status']) && $dados['status'] !== $pedidoExistente->status) {
+                if (!$pedidoExistente->validarTransicaoStatus($dados['status'])) {
+                    throw new \Exception("Transição de status inválida de {$pedidoExistente->status} para {$dados['status']}", 400);
+                }
+            }
+
             $pedidoExistente->fill($dados);
             $pedidoExistente->save();
 

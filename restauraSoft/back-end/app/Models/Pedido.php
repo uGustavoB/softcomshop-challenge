@@ -68,7 +68,21 @@ class Pedido extends Model
 
     public function podeAdicionarItens()
     {
-        return in_array($this->status, ['pendente', 'em_andamento', 'novo']);
+        return in_array($this->status, ['pendente', 'em_preparo', 'novo']);
+    }
+
+    public function validarTransicaoStatus($novoStatus)
+    {
+        $transicoesPermitidas = [
+            'pendente' => ['em_preparo', 'cancelado'],
+            'em_preparo' => ['pronto', 'cancelado'],
+            'pronto' => ['entregue'],
+            'entregue' => ['finalizado'],
+            'finalizado' => [],
+            'cancelado' => []
+        ];
+
+        return in_array($novoStatus, $transicoesPermitidas[$this->status] ?? []);
     }
 
     public function atualizarTotal()

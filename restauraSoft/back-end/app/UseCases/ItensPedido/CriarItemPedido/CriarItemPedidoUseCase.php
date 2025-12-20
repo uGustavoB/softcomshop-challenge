@@ -59,6 +59,15 @@ class CriarItemPedidoUseCase implements ICriarItemPedidoUseCase
             }
 
             $pedido = $this->pedidoRepository->buscarPorId($dados['pedido_id']);
+            if (!$pedido) {
+                throw new \Exception('Pedido não encontrado.', 404);
+            }
+
+            if (!$pedido->podeAdicionarItens()) {
+                throw new \Exception('Não é possível adicionar itens a este pedido.', 400);
+            }
+
+            $pedido = $this->pedidoRepository->buscarPorId($dados['pedido_id']);
 
             if (!$pedido) {
                 throw new \Exception('Pedido não encontrado.', 404);
@@ -75,6 +84,11 @@ class CriarItemPedidoUseCase implements ICriarItemPedidoUseCase
 
             // Atualiza status da mesa (se aplicável)
             $this->atualizarStatusMesaUseCase->execute($pedido, 'ocupada');
+
+            // Atualizar status do pedido para "em_andamento" se estava "pendente"
+            if ($pedido->status === 'pendente') {
+                $pedido->update(['status' => 'em_preparo']);
+            }
 
             DB::commit();
 

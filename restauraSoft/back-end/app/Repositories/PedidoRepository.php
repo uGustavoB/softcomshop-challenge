@@ -58,4 +58,11 @@ class PedidoRepository extends BaseRepository
             ->lockForUpdate()
             ->first();
     }
+
+    public function buscarPedidoAtivoPorMesa($mesa_id)
+    {
+        return Pedido::where('mesa_id', $mesa_id)
+            ->whereIn('status', ['pendente', 'em_preparo', 'pronto'])
+            ->first();
+    }
 }

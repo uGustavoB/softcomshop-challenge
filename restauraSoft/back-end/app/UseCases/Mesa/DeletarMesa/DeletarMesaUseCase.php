@@ -36,6 +36,8 @@ class DeletarMesaUseCase implements IDeletarMesaUseCase
                 throw new \Exception("Não é possível deletar a mesa pois existem pedidos associados a ela.", 409);
             }
 
+            $this->repository->deletar($id);
+
             return [
                 'status' => 'success',
                 'message' => 'Mesa deletada com sucesso',
