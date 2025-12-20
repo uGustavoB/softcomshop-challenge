@@ -213,6 +213,13 @@ export class MesaVisualizar implements OnInit{
       return;
     }
 
+    // Valida se todos os itens têm prato selecionado
+    const itemSemPrato = this.itens.find(item => item.pratoId === 0);
+    if (itemSemPrato) {
+      this.toastr.warning('Todos os itens devem ter um prato selecionado', 'Atenção');
+      return;
+    }
+
     this.isLoading = true;
 
     const pedidoData = {
@@ -225,11 +232,7 @@ export class MesaVisualizar implements OnInit{
 
     this.pedidosService.createPedido(pedidoData).subscribe({
       next: (pedido) => {
-        // Colocar adição dos itens
-        this.toastr.success('Pedido criado com sucesso!', 'Sucesso');
-        this.cancelarNovoPedido();
-        this.loadPedidos();
-        this.isLoading = false;
+        this.adicionarItensAoPedido(pedido.id);
       },
       error: (error) => {
         console.error('Erro ao criar pedido:', error);
@@ -237,6 +240,53 @@ export class MesaVisualizar implements OnInit{
         this.isLoading = false;
       }
     });
+  }
+
+  private adicionarItensAoPedido(pedidoId: number): void {
+    if (this.itens.length === 0) {
+      this.finalizarCriacaoPedido();
+      return;
+    }
+
+    let itensProcessados = 0;
+    const totalItens = this.itens.length;
+
+    this.itens.forEach(item => {
+      if (item.pratoId > 0) {
+        const itemData = {
+          prato_id: item.pratoId,
+          quantidade: item.quantidade,
+          preco_unitario: item.preco
+        };
+
+        this.pedidosService.addPedidoItem(pedidoId, itemData).subscribe({
+          next: () => {
+            itensProcessados++;
+
+            if (itensProcessados === totalItens) {
+              this.finalizarCriacaoPedido();
+            }
+          },
+          error: (error) => {
+            console.error('Erro ao adicionar item ao pedido:', error);
+            this.toastr.error(`Erro ao adicionar item: ${item.pratoNome}`, 'Erro');
+            this.isLoading = false;
+          }
+        });
+      } else {
+        itensProcessados++;
+        if (itensProcessados === totalItens) {
+          this.finalizarCriacaoPedido();
+        }
+      }
+    });
+  }
+
+  private finalizarCriacaoPedido(): void {
+    this.toastr.success('Pedido criado com sucesso!', 'Sucesso');
+    this.cancelarNovoPedido();
+    this.loadPedidos();
+    this.isLoading = false;
   }
 
   calcularValorTotal(): number {
