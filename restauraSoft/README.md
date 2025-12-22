@@ -28,6 +28,9 @@ Este projeto foi pensado para se aproximar de um cenário real de mercado, envol
 
 ## 💻 Como rodar o projeto:
 
+
+### Back-end
+
  1. Clonar repositório
 ```bash
 git clone https://github.com/uGustavoB/softcomshop-challenge.git
@@ -49,7 +52,56 @@ docker73 php artisan migrate
 ```
 
 4. Acessar a API:
+Caso feito através do Docker, provavelmente seu link será algo como:
 ```bash
 http://localhost:73/api
 ```
 
+### Front-end
+
+ 1. Na raiz do RestauraSoft:
+```bash
+cd front-end
+```
+
+2. Instalar o Node.js
+O projeto funciona corretamente com o Node 20 (LTS)
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+3. Instalar o Angular CLI globalmente
+```bash
+sudo npm install -g @angular/cli
+```
+
+4. Instalar dependências
+```bash
+npm install
+```
+
+5. Configurar o ambiente da API
+Edite o arquivo:
+```bash
+nano src/environments/environment.ts
+```
+Exemplo de configuração:
+```ts
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:73/api'
+};
+```
+⚠️ Importante:  
+Use **HTTP** e não HTTPS, pois o backend não está com SSL configurado.
+
+6. Subir o servidor de desenvolvimento Angular
+```bash
+ng serve
+```
+
+7. Acessar o front-end no navegador
+```bash
+http://localhost:4200/login
+```
