@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\Categoria;
+use App\Models\Pedido;
+use JasonGuru\LaravelMakeRepository\Repository\BaseRepository;
+//use Your Model
+
+/**
+ * Class PedidoRepository.
+ */
+class PedidoRepository extends BaseRepository
+{
+    public function __construct() {
+        parent::__construct();
+        $this->model = new Pedido();
+    }
+
+    /**
+     * @return string
+     *  Return the model
+     */
+    public function model()
+    {
+        return Pedido::class;
+    }
+
+    public function listagem() {
+        return $this->model()::all();
+    }
+
+    public function capturar($id) {
+        return $this->model()::find( $id );
+    }
+
+    public function salvar($dados) {
+        $id = $dados['id'] ?? null;
+
+        $model = $this->model()::findOrNew($id);
+
+        $model->fill($dados);
+
+        $model->save();
+
+        return $model;
+    }
+
+    public function deletar($id) {
+        $this->model()::find( $id )->delete();
+
+        return true;
+    }
+
+    public function buscarPorId($id)
+    {
+        return Pedido::where('id', $id)
+            ->lockForUpdate()
+            ->first();
+    }
+
+    public function buscarPedidoAtivoPorMesa($mesa_id)
+    {
+        return Pedido::where('mesa_id', $mesa_id)
+            ->whereIn('status', ['pendente', 'em_preparo', 'pronto'])
+            ->first();
+    }
+
+    public function verificarPedidosNaMesa($mesa_id)
+    {
+        return Pedido::where('mesa_id', $mesa_id)->exists();
+    }
+}

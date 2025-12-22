@@ -1,0 +1,295 @@
+<div class="space-y-6">
+  <!-- Cabeçalho -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-white">Cardápio</h1>
+      <p class="text-neutral-400 mt-1">Gerencie os pratos do restaurante</p>
+    </div>
+    <button
+      (click)="handleNovoPrato()"
+      class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+    >
+      <mat-icon fontSet="material-symbols-rounded" class="mr-2">add</mat-icon>
+      Novo Prato
+    </button>
+  </div>
+
+  <!-- Grid de pratos -->
+  <div  class="">
+    <!-- Card de prato -->
+    <div @itemAnimation *ngIf="pratos.length > 0" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div *ngFor="let prato of pratos;"
+           class="border border-neutral-800 bg-neutral-900/50 backdrop-blur-sm rounded-lg overflow-hidden group hover:border-neutral-700 transition-colors">
+        <!-- Imagem do prato -->
+        <div class="aspect-video relative bg-neutral-800 overflow-hidden">
+          <div *ngIf="prato.imagem_url; else placeholder" class="w-full h-full">
+            <img
+              [src]="prato.imagem_url"
+              [alt]="prato.nome"
+              class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+            />
+          </div>
+          <ng-template #placeholder>
+            <div class="w-full h-full flex items-center justify-center">
+              <mat-icon fontSet="material-symbols-rounded" class="text-6xl text-neutral-500">restaurant</mat-icon>
+            </div>
+          </ng-template>
+
+          <!-- Badge de status -->
+          <div class="absolute top-2 right-2">
+            <span [class]="getStatusBadgeClass(prato.ativo)">
+              {{ prato.ativo ? 'Ativo' : 'Inativo' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Conteúdo do card -->
+        <div class="p-4 space-y-2">
+          <div>
+            <h3 class="font-semibold text-white text-lg">{{ prato.nome }}</h3>
+            <p class="text-xs text-neutral-500">{{ getCategoriaName(prato.categoria_id) }}</p>
+          </div>
+
+          <p *ngIf="prato.descricao" class="text-sm text-neutral-400 line-clamp-2">{{ prato.descricao }}</p>
+
+          <p class="text-2xl font-bold text-emerald-400">
+            R$ {{ prato.preco.toFixed(2) }}
+          </p>
+        </div>
+
+        <!-- Footer do card (ações) -->
+        <div class="p-4 pt-0 flex gap-2">
+          <button
+            (click)="handleEditPrato(prato)"
+            class="flex-1 border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-3 py-1.5 rounded-lg flex items-center justify-center text-sm transition-colors"
+          >
+            <mat-icon fontSet="material-symbols-rounded" class="mr-1 text-sm">edit</mat-icon>
+            Editar
+          </button>
+          <button
+            (click)="handleDeletePrato(prato)"
+            class="border border-red-900 text-red-400 hover:bg-red-950 bg-transparent px-3 py-1.5 rounded-lg flex items-center justify-center text-sm transition-colors"
+          >
+            <mat-icon fontSet="material-symbols-rounded" class="text-sm">delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado vazio -->
+    <div *ngIf="pratos.length === 0 && !isLoading"
+         class="col-span-full border border-neutral-800 bg-neutral-900/50 backdrop-blur-sm rounded-lg">
+      <div class="py-12 text-center">
+        <mat-icon fontSet="material-symbols-rounded" class="text-neutral-500 text-5xl mb-4">restaurant</mat-icon>
+        <p class="text-neutral-500 text-lg">Nenhum prato cadastrado</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading && pratos.length === 0" class="col-span-full text-center py-12">
+    <mat-icon fontSet="material-symbols-rounded" class="animate-spin text-amber-500 text-4xl">refresh</mat-icon>
+    <p class="text-neutral-400 mt-2">Carregando pratos...</p>
+  </div>
+</div>
+
+<!-- Modal de edição/criação -->
+<div *ngIf="isEditModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-neutral-900 border border-neutral-800 rounded-lg w-full max-w-2xl text-white max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-neutral-800">
+      <h2 class="text-xl font-bold">
+        {{ selectedPrato ? 'Editar Prato' : 'Novo Prato' }}
+      </h2>
+    </div>
+
+    <form [formGroup]="pratoForm" (ngSubmit)="handleSavePrato()" class="p-6 space-y-4">
+      <!-- Imagem -->
+      <div class="space-y-2">
+        <label class="text-neutral-300 block text-sm font-medium">Imagem</label>
+        <div class="flex flex-col items-center space-y-4">
+          <div class="w-full max-w-xs aspect-video bg-neutral-800 rounded-lg overflow-hidden border border-neutral-700">
+            <div *ngIf="imagemPreview; else noImage" class="w-full h-full">
+              <img [src]="imagemPreview" alt="Preview" class="object-cover w-full h-full">
+            </div>
+            <ng-template #noImage>
+              <div class="w-full h-full flex items-center justify-center">
+                <mat-icon fontSet="material-symbols-rounded" class="text-4xl text-neutral-500">image</mat-icon>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="flex gap-2">
+            <label class="cursor-pointer">
+              <input
+                type="file"
+                (change)="onFileSelected($event)"
+                accept="image/jpeg,image/png,image/jpg,image/gif"
+                class="hidden"
+              />
+              <span class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg inline-flex items-center text-sm transition-colors">
+                <mat-icon fontSet="material-symbols-rounded" class="mr-1">upload</mat-icon>
+                {{ imagemFile ? 'Alterar imagem' : 'Selecionar imagem' }}
+              </span>
+            </label>
+
+            <!-- Botão para remover imagem (só aparece se tiver imagem nova selecionada) -->
+            <button
+              *ngIf="imagemFile"
+              type="button"
+              (click)="removerImagem()"
+              class="border border-red-800 text-red-400 hover:bg-red-950 bg-transparent px-4 py-2 rounded-lg inline-flex items-center text-sm transition-colors"
+            >
+              <mat-icon fontSet="material-symbols-rounded" class="mr-1">delete</mat-icon>
+              Remover
+            </button>
+          </div>
+
+          <p class="text-xs text-neutral-500 text-center">Formatos: JPG, PNG, GIF. Tamanho máximo: 2MB</p>
+        </div>
+      </div>
+
+      <!-- Nome -->
+      <div class="space-y-2">
+        <label for="nome" class="text-neutral-300 block text-sm font-medium">Nome *</label>
+        <input
+          type="text"
+          id="nome"
+          formControlName="nome"
+          class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          placeholder="Ex: Pizza Margherita"
+        />
+        <div *ngIf="f['nome'].invalid && f['nome'].touched" class="text-red-400 text-sm">
+          <span *ngIf="f['nome'].errors?.['required']">Nome é obrigatório</span>
+          <span *ngIf="f['nome'].errors?.['minlength']">Nome deve ter pelo menos 3 caracteres</span>
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      <div class="space-y-2">
+        <label for="descricao" class="text-neutral-300 block text-sm font-medium">Descrição</label>
+        <textarea
+          id="descricao"
+          formControlName="descricao"
+          rows="3"
+          class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+          placeholder="Descrição do prato"
+        ></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Preço -->
+        <div class="space-y-2">
+          <label for="preco" class="text-neutral-300 block text-sm font-medium">Preço *</label>
+          <div class="relative">
+            <span class="absolute left-3 top-2.5 text-neutral-400">R$</span>
+            <input
+              type="number"
+              id="preco"
+              formControlName="preco"
+              step="0.01"
+              min="0.01"
+              class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              placeholder="0.00"
+            />
+          </div>
+          <div *ngIf="f['preco'].invalid && f['preco'].touched" class="text-red-400 text-sm">
+            <span *ngIf="f['preco'].errors?.['required']">Preço é obrigatório</span>
+            <span *ngIf="f['preco'].errors?.['min']">Preço deve ser maior que zero</span>
+          </div>
+        </div>
+
+        <!-- Categoria -->
+        <div class="space-y-2">
+          <label for="categoria_id" class="text-neutral-300 block text-sm font-medium">Categoria *</label>
+          <select
+            id="categoria_id"
+            formControlName="categoria_id"
+            class="w-full bg-neutral-800 border border-neutral-700 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          >
+            <option value="" disabled selected>Selecione uma categoria</option>
+            <option *ngFor="let categoria of categorias" [value]="categoria.id">
+              {{ categoria.nome }}
+            </option>
+          </select>
+          <div *ngIf="f['categoria_id'].invalid && f['categoria_id'].touched" class="text-red-400 text-sm">
+            <span *ngIf="f['categoria_id'].errors?.['required']">Categoria é obrigatória</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="space-y-2">
+        <label class="text-neutral-300 block text-sm font-medium">Status</label>
+        <div class="flex items-center">
+          <label class="flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              formControlName="ativo"
+              class="w-4 h-4 rounded bg-neutral-800 border-neutral-700 text-amber-500 focus:ring-amber-500 focus:ring-2"
+            />
+            <span class="ml-2 text-sm text-neutral-300">Ativo</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Botões -->
+      <div class="pt-4 border-t border-neutral-800 flex justify-end gap-3">
+        <button
+          type="button"
+          (click)="closeEditModal()"
+          class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg transition-colors"
+          [disabled]="isLoading"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="isLoading || pratoForm.invalid"
+          class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+            <span *ngIf="isLoading">
+              <mat-icon fontSet="material-symbols-rounded" class="animate-spin">refresh</mat-icon>
+            </span>
+          <span *ngIf="!isLoading">{{ selectedPrato ? 'Salvar' : 'Criar' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div *ngIf="isDeleteModalOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="bg-neutral-900 border border-neutral-800 rounded-lg w-full max-w-md text-white">
+    <div class="p-6 border-b border-neutral-800">
+      <h2 class="text-xl font-bold">Confirmar Exclusão</h2>
+    </div>
+
+    <div class="p-6">
+      <p class="text-neutral-300">
+        Tem certeza que deseja excluir o prato
+        <span class="font-bold text-white ml-1">{{ selectedPrato?.nome }}</span>?
+      </p>
+      <p class="text-sm text-neutral-500 mt-2">Esta ação não pode ser desfeita.</p>
+    </div>
+
+    <div class="p-6 border-t border-neutral-800 flex justify-end gap-3">
+      <button
+        (click)="closeDeleteModal()"
+        class="border border-neutral-700 text-neutral-300 hover:bg-neutral-800 bg-transparent px-4 py-2 rounded-lg transition-colors"
+        [disabled]="isLoading"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="handleConfirmDelete()"
+        [disabled]="isLoading"
+        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+          <span *ngIf="isLoading">
+            <mat-icon fontSet="material-symbols-rounded" class="animate-spin">refresh</mat-icon>
+          </span>
+        <span *ngIf="!isLoading">Excluir</span>
+      </button>
+    </div>
+  </div>
+</div>
