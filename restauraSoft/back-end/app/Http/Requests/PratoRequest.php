@@ -27,10 +27,14 @@ class PratoRequest extends FormRequest
             "nome" => "required|string|max:255",
             "descricao" => "nullable|string",
             "preco" => "required|numeric|min:0",
-            "imagem" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048",
+//            "imagem" => "nullable|image|mimes:jpeg,png,jpg,gif|max:2048",
             "categoria_id" => "nullable|integer|exists:categorias,id",
             "ativo" => "nullable|boolean",
         ];
+
+        if ($this->hasFile('imagem')) {
+            $rules['imagem'] = 'image|mimes:jpeg,png,jpg,gif|max:2048';
+        }
 
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             $pratoId = $this->route('id');

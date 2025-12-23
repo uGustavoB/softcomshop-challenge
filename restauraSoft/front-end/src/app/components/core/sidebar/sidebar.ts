@@ -26,7 +26,6 @@ export class Sidebar implements OnInit{
   currentPath: string = '';
 
   menuItems: MenuItem[] = [
-    { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     { href: '/pedidos', label: 'Pedidos', icon: 'shopping_bag' },
     { href: '/mesas', label: 'Mesas', icon: 'table_restaurant' },
     { href: '/pratos', label: 'Pratos', icon: 'restaurant' },

@@ -133,7 +133,9 @@
       <path value="$PROJECT_DIR$/restauraSoft/back-end/vendor/swagger-api/swagger-ui" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.0">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="b606953c-ff7b-4e33-bea2-431f841cc4d2" timeout="60000" />

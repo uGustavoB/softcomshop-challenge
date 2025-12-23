@@ -114,6 +114,7 @@ export class Mesas implements OnInit{
   handleCloseViewModal(): void {
     this.isModalViewOpen = false;
     this.selectedMesa = null;
+    this.loadMesas();
   }
 
   getStatusInfo(status: string): StatusConfig {
